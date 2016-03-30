@@ -15,4 +15,6 @@ class DdlGenerator
     {
         $this->config = $config;
     }
+    
+    
 }

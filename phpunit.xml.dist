@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <phpunit
-    bootstrap="./vendor/autoload.php"
+    bootstrap="./tests/preload.php"
     colors="true"
     convertErrorsToExceptions="true"
     convertNoticesToExceptions="true"
@@ -12,7 +12,7 @@
     syntaxCheck="true"
 >
     <testsuite name="PruneMazui\DdlGenerator tests">
-        <directory>./tests</directory>
+        <directory>./tests/src/</directory>
     </testsuite>
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true">

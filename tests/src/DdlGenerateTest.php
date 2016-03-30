@@ -10,7 +10,7 @@ class DdlGenerateTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->config = array(
-            'filename' => __DIR__ . '/files/db_specifications.xlsx'
+            'filename'    => __DIR__ . '/files/db_specifications.xlsx',
         );
     }
 
@@ -21,6 +21,6 @@ class DdlGenerateTest extends \PHPUnit_Framework_TestCase
     {
         $generator = new DdlGenerator($this->config);
 
-        $this->assertTrue($generator instanceof DdlGenerator);
+        assertTrue($generator instanceof DdlGenerator);
     }
 }
