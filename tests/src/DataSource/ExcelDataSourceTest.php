@@ -3,6 +3,7 @@ namespace PruneMazui\DdlGeneratorTest\DataSouce;
 
 use PruneMazui\DdlGenerator\DataSource\ExcelDataSource;
 use PruneMazui\DdlGenerator\TableDefinition\TableDefinition;
+use PruneMazui\DdlGenerator\DdlBuilder\MySqlDdlBuilder;
 
 class ExcelDataSourceTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,6 +27,9 @@ class ExcelDataSourceTest extends \PHPUnit_Framework_TestCase
         $table_definition = $data_source->load();
 
         assertTrue($table_definition instanceof TableDefinition);
+
+        $builder = new MySqlDdlBuilder();
+        file_put_contents(__DIR__ . '/debug.sql', $builder->build($table_definition));
 
     }
 }

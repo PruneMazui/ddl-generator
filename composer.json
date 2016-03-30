@@ -13,6 +13,7 @@
     ],
     "require" : {
         "php" : "^5.3|^7.0",
+        "ext-mbstring" : "*",
         "phpoffice/phpexcel": "^1.8"
     },
     "require-dev": {
