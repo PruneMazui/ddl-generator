@@ -4,16 +4,27 @@ namespace PruneMazui\DdlGenerator\DdlBuilder;
 use PruneMazui\DdlGenerator\TableDefinition\TableDefinition;
 use PruneMazui\DdlGenerator\DdlGeneratorException;
 use PruneMazui\DdlGenerator\TableDefinition\Table;
+use PruneMazui\DdlGenerator\TableDefinition\Schema;
 
+/**
+ * DDL for MySQL
+ *
+ * @author ko_tanaka
+ */
 class MySqlDdlBuilder extends AbstractDdlBuilder
 {
-    private static $defaultConfig = array(
-        'add_drop_table'    => true,
+    protected static $defaultConfig = array(
         'add_empty_string'  => true, // if colmn's data type is (var)char and required, empty string is added to the default value
         'end_of_line'       => "\n",
+        'indent'            => "    ",
         'format'            => "UTF-8",
     );
 
+    /**
+     *
+     * @param string $data_type
+     * @return bool
+     */
     public function isNumericType($data_type)
     {
         static $map = array(
@@ -48,88 +59,114 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
 
     /**
      * {@inheritDoc}
-     * @see \PruneMazui\DdlGenerator\DdlBuilder\DdlBuilderInterface::build()
+     * @see \PruneMazui\DdlGenerator\DdlBuilder\AbstractDdlBuilder::buildAll()
      */
-    public function build(TableDefinition $definition)
+    public function buildAll(TableDefinition $definition, $add_drop_table = true)
     {
-        $config = $this->config + self::$defaultConfig;
-
         $schemas = $definition->getSchemas();
 
         if(count($schemas) > 1) {
             throw new DdlGeneratorException('There are no schemata in MySQL. Schema count is grater than 1.');
         }
 
-        $eol = $config['end_of_line'];
+        return parent::buildAll($definition, $add_drop_table);
+    }
 
-        // DROP 構文
-        $sql = '';
-        if($config['add_drop_table']) {
-            $sql .= $this->buildDropTable($definition, $eol);
+    /**
+     * {@inheritDoc}
+     * @see \PruneMazui\DdlGenerator\DdlBuilder\DdlBuilderInterface::buildAllCreateTable()
+     */
+    public function buildAllCreateTable(TableDefinition $definition)
+    {
+        $eol = $this->getConfig('end_of_line');
+
+        $sql = '/** CREATE TABLE **/' . $eol;
+
+        foreach($definition->getSchemas() as $schema) {
+
+            foreach($schema->getTables() as $table) {
+                $sql .= $this->buildCreateTable($schema, $table) . $eol . $eol;
+            }
         }
-
-        $sql .= $this->buildCreateTable($definition, $config['add_empty_string'] ,$eol);
 
         return $sql;
     }
 
-    public function buildDropTable(TableDefinition $definition, $eol)
+    /**
+     * {@inheritDoc}
+     * @see \PruneMazui\DdlGenerator\DdlBuilder\DdlBuilderInterface::buildCreateTable()
+     */
+    public function buildCreateTable(Schema $schema, Table $table)
     {
+        $eol = $this->getConfig('end_of_line');
+        $indent = $this->getConfig('indent');
+
+        $sql  = 'CREATE TABLE ' . $this->quoteIdentifier($table->getTableName()) . ' (' . $eol;
+        $sql .= $this->buildTableColumns($table);
+
+        $primary_key = $table->getPrimaryKey();
+        if(count($primary_key)) {
+
+            foreach($primary_key as $key => $value) {
+                $primary_key[$key] = $this->quoteIdentifier($value);
+            }
+
+            $sql .= ',' . $eol . $eol . $indent . 'PRIMARY KEY ( ' . implode(', ', $primary_key) . ' )' . $eol;
+        }
+
+        $sql .= ')';
+        $comment = $table->getComment();
+        if(strlen($comment)) {
+            $sql .= ' COMMENT=' . $this->quoteString($comment);
+        }
+        $sql .= ';';
+
+        return $sql;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \PruneMazui\DdlGenerator\DdlBuilder\DdlBuilderInterface::buildAllDropTable()
+     */
+    public function buildAllDropTable(TableDefinition $definition)
+    {
+        $eol = $this->getConfig('end_of_line');
+
         $sql =
-            '/** DROP TABLE **/' . $eol .
-            'SET @@session.SQL_NOTES = 0;' . $eol .
-            'SET @@session.FOREIGN_KEY_CHECKS = 0;' . $eol
+        '/** DROP TABLE **/' . $eol .
+        'SET @@session.SQL_NOTES = 0;' . $eol .
+        'SET @@session.FOREIGN_KEY_CHECKS = 0;' . $eol
         ;
 
         foreach($definition->getSchemas() as $schema) {
             foreach($schema->getTables() as $table) {
-                $sql .= 'DROP TABLE IF EXISTS ' . $this->quoteIdentifier($table->getTableName()) . ';' . $eol;
+                $sql .= $this->buildDropTable($schema, $table) . $eol;
             }
         }
 
         $sql .=
-            'SET @@session.SQL_NOTES = DEFAULT;' . $eol .
-            'SET @@session.FOREIGN_KEY_CHECKS = DEFAULT;' . $eol
+        'SET @@session.SQL_NOTES = DEFAULT;' . $eol .
+        'SET @@session.FOREIGN_KEY_CHECKS = DEFAULT;' . $eol
         ;
 
         return $sql . $eol;
     }
 
-    public function buildCreateTable(TableDefinition $definition, $addEmptyString ,$eol)
+    /**
+     * {@inheritDoc}
+     * @see \PruneMazui\DdlGenerator\DdlBuilder\DdlBuilderInterface::buildDropTable()
+     */
+    public function buildDropTable(Schema $schema, Table $table)
     {
-        $indent = '    ';
-        $sql = '/** CREATE TABLE **/';
-
-        foreach($definition->getSchemas() as $schema) {
-
-            foreach($schema->getTables() as $table) {
-                $sql .= $eol. 'CREATE TABLE ' . $this->quoteIdentifier($table->getTableName()) . ' (' . $eol;
-                $sql .= $this->buildTableColumns($table, $indent, $addEmptyString, $eol);
-
-                $primary_key = $table->getPrimaryKey();
-                if(count($primary_key)) {
-
-                    foreach($primary_key as $key => $value) {
-                        $primary_key[$key] = $this->quoteIdentifier($value);
-                    }
-
-                    $sql .= ',' . $eol . $eol . $indent . 'PRIMARY KEY ( ' . implode(', ', $primary_key) . ' )' . $eol;
-                }
-
-                $sql .= ')';
-                $comment = $table->getComment();
-                if(strlen($comment)) {
-                    $sql .= ' COMMENT=' . $this->quoteString($comment);
-                }
-                $sql .= ';' . $eol;
-            }
-        }
-
-        return $sql;
+        return 'DROP TABLE IF EXISTS ' . $this->quoteIdentifier($table->getTableName()) . ';';
     }
 
-    public function buildTableColumns(Table $table, $indent, $addEmptyString, $eol)
+    private function buildTableColumns(Table $table)
     {
+        $addEmptyString = $this->getConfig('add_empty_string');
+        $eol = $this->getConfig('end_of_line');
+        $indent = $this->getConfig('indent');
+
         $lines = array();
         foreach($table->getColumns() as $column) {
             $sql = '';
@@ -173,6 +210,4 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
 
         return implode(',' . $eol, $lines);
     }
-
-
 }
