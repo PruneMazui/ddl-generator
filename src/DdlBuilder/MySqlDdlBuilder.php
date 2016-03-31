@@ -1,10 +1,10 @@
 <?php
 namespace PruneMazui\DdlGenerator\DdlBuilder;
 
-use PruneMazui\DdlGenerator\TableDefinition\TableDefinition;
+use PruneMazui\DdlGenerator\Definition\Definition;
 use PruneMazui\DdlGenerator\DdlGeneratorException;
-use PruneMazui\DdlGenerator\TableDefinition\Table;
-use PruneMazui\DdlGenerator\TableDefinition\Schema;
+use PruneMazui\DdlGenerator\Definition\Table;
+use PruneMazui\DdlGenerator\Definition\Schema;
 
 /**
  * DDL for MySQL
@@ -42,7 +42,7 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
             }
         }
 
-        false;
+        return false;
     }
 
     /**
@@ -61,7 +61,7 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
      * {@inheritDoc}
      * @see \PruneMazui\DdlGenerator\DdlBuilder\AbstractDdlBuilder::buildAll()
      */
-    public function buildAll(TableDefinition $definition, $add_drop_table = true)
+    public function buildAll(Definition $definition, $add_drop_table = true)
     {
         $schemas = $definition->getSchemas();
 
@@ -76,14 +76,17 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
      * {@inheritDoc}
      * @see \PruneMazui\DdlGenerator\DdlBuilder\DdlBuilderInterface::buildAllCreateTable()
      */
-    public function buildAllCreateTable(TableDefinition $definition)
+    public function buildAllCreateTable(Definition $definition)
     {
+        if($definition->countSchemas() == 0) {
+            return '';
+        }
+
         $eol = $this->getConfig('end_of_line');
 
         $sql = '/** CREATE TABLE **/' . $eol;
 
         foreach($definition->getSchemas() as $schema) {
-
             foreach($schema->getTables() as $table) {
                 $sql .= $this->buildCreateTable($schema, $table) . $eol . $eol;
             }
@@ -121,6 +124,7 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
         }
         $sql .= ';';
 
+        // @todo convert encoding
         return $sql;
     }
 
@@ -128,8 +132,12 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
      * {@inheritDoc}
      * @see \PruneMazui\DdlGenerator\DdlBuilder\DdlBuilderInterface::buildAllDropTable()
      */
-    public function buildAllDropTable(TableDefinition $definition)
+    public function buildAllDropTable(Definition $definition)
     {
+        if($definition->countSchemas() == 0) {
+            return '';
+        }
+
         $eol = $this->getConfig('end_of_line');
 
         $sql =
@@ -158,6 +166,7 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
      */
     public function buildDropTable(Schema $schema, Table $table)
     {
+        // @todo convert encoding
         return 'DROP TABLE IF EXISTS ' . $this->quoteIdentifier($table->getTableName()) . ';';
     }
 

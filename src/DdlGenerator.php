@@ -1,20 +1,7 @@
 <?php
 namespace PruneMazui\DdlGenerator;
 
-class DdlGenerator
+class DdlGenerator extends AbstractDdlGenerator
 {
-    /**
-     * @var array
-     */
-    private $config;
 
-    /**
-     * @param array $config
-     */
-    public function __construct(array $config)
-    {
-        $this->config = $config;
-    }
-    
-    
 }

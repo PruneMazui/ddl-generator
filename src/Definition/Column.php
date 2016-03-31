@@ -1,5 +1,5 @@
 <?php
-namespace PruneMazui\DdlGenerator\TableDefinition;
+namespace PruneMazui\DdlGenerator\Definition;
 
 /**
  * Column

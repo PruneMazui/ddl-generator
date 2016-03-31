@@ -1,32 +1,63 @@
 <?php
 namespace PruneMazui\DdlGenerator\DataSource;
 
+use PruneMazui\DdlGenerator\AbstractDdlGenerator;
+
 /**
  *
  * @author ko_tanaka
  */
-abstract class AbstractDataSource implements DataSourceInterface
+abstract class AbstractDataSource extends AbstractDdlGenerator implements DataSourceInterface
 {
-    protected $config = array();
+    const TYPE_TABLE = 'table';
+    const TYPE_FOREIGN_KEY = 'foreign_key';
+    const TYPE_INDEX = 'index';
+
+    const FEILD_SCHEMA_NAME = 'schema_name';
+    const FEILD_TABLE_NAME = 'table_name';
+    const FEILD_TABLE_COMMENT = 'table_comment';
+    const FEILD_COLUMN_NAME = 'column_name';
+    const FEILD_COLUMN_COMMENT = 'column_comment';
+    const FEILD_COLUMN_DATA_TYPE = 'column_data_type';
+    const FEILD_COLUMN_LENGTH = 'column_length';
+    const FEILD_COLUMN_REQUIRED = 'column_required';
+    const FEILD_COLUMN_PRIMARY_KEY = 'column_primary_key';
+    const FEILD_COLUMN_AUTO_INCREMENT = 'column_auto_increament';
+    const FEILD_COLUMN_DEFAULT = 'column_default';
+
+    protected $datasource_type = self::TYPE_TABLE; // default
+
+    protected static $defaultKeyMap = array(
+        self::TYPE_TABLE       => array(),
+        self::TYPE_INDEX       => array(),
+        self::TYPE_FOREIGN_KEY => array(),
+    );
 
     /**
-     * @param array optional $config
+     * {@inheritDoc}
+     * @see \PruneMazui\DdlGenerator\DataSource\DataSourceInterface::setDataSourceType()
      */
-    public function __construct(array $config = null)
+    public function setDataSourceType($type)
     {
-        if(! is_null($config)) {
-            $this->setConfig($config);
-        }
+        $this->datasource_type = $type;
+        return $this;
     }
 
     /**
-     * Set Config
-     * @param array $config
-     * @return \PruneMazui\DdlGenerator\DataSource\AbstractDataSource
+     * {@inheritDoc}
+     * @see \PruneMazui\DdlGenerator\DataSource\DataSourceInterface::getKeyMap()
      */
-    public function setConfig(array $config)
+    public function getKeyMap($feild = null)
     {
-        $this->config = $config;
-        return $this;
+        $key_map = $this->getConfig('key_map');
+        if(empty($key_map)) {
+            $key_map = static::$defaultKeyMap[$this->datasource_type];
+        }
+
+        if(is_null($feild)) {
+            return $key_map;
+        }
+
+        return isset($key_map[$feild]) ? $key_map[$feild] : null;
     }
 }

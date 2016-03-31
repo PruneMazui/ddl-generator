@@ -1,5 +1,5 @@
 <?php
-namespace PruneMazui\DdlGenerator\TableDefinition;
+namespace PruneMazui\DdlGenerator\Definition;
 
 use PruneMazui\DdlGenerator\DdlGeneratorException;
 
@@ -16,7 +16,7 @@ class Table
     private $comment = '';
 
     /**
-     * @var \PruneMazui\DdlGenerator\TableDefinition\Column[]
+     * @var \PruneMazui\DdlGenerator\Definition\Column[]
      */
     private $columns = array();
 
@@ -24,6 +24,14 @@ class Table
      * @var array
      */
     private $primary_key = array();
+
+    /**
+     * @return number
+     */
+    public function countColumns()
+    {
+        return count($this->columns);
+    }
 
     /**
      * @param string $table_name
@@ -61,7 +69,7 @@ class Table
     }
 
     /**
-     * @return \PruneMazui\DdlGenerator\TableDefinition\Column[]
+     * @return \PruneMazui\DdlGenerator\Definition\Column[]
      */
     public function getColumns()
     {
@@ -71,7 +79,7 @@ class Table
     /**
      * set primary key
      * @param string | array $primary_key
-     * @return \PruneMazui\DdlGenerator\TableDefinition\Table
+     * @return \PruneMazui\DdlGenerator\Definition\Table
      */
     public function setPrimaryKey($primary_key)
     {
@@ -94,7 +102,7 @@ class Table
      * add primary key
      * @param string $column_name
      * @throws DdlGeneratorException
-     * @return \PruneMazui\DdlGenerator\TableDefinition\Table
+     * @return \PruneMazui\DdlGenerator\Definition\Table
      */
     public function addPrimaryKey($column_name)
     {
@@ -122,7 +130,7 @@ class Table
      * add Column
      * @param Column $column
      * @throws DdlGeneratorException
-     * @return \PruneMazui\DdlGenerator\TableDefinition\Table
+     * @return \PruneMazui\DdlGenerator\Definition\Table
      */
     public function addColumn(Column $column)
     {

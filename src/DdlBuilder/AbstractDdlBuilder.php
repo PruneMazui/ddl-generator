@@ -1,7 +1,7 @@
 <?php
 namespace PruneMazui\DdlGenerator\DdlBuilder;
 
-use PruneMazui\DdlGenerator\TableDefinition\TableDefinition;
+use PruneMazui\DdlGenerator\Definition\Definition;
 
 /**
  * Abstract Class DDL builder
@@ -37,10 +37,15 @@ abstract class AbstractDdlBuilder implements DdlBuilderInterface
     /**
      * Get Config
      * @param config $key
+     * @return mixed
      */
-    protected function getConfig($key)
+    public function getConfig($key = null)
     {
         $config = $this->config + static::$defaultConfig;
+
+        if(is_null($key)) {
+            return $config;
+        }
 
         if(isset($config[$key])) {
             return $config[$key];
@@ -62,7 +67,7 @@ abstract class AbstractDdlBuilder implements DdlBuilderInterface
      * {@inheritDoc}
      * @see \PruneMazui\DdlGenerator\DdlBuilder\DdlBuilderInterface::buildAll()
      */
-    public function buildAll(TableDefinition $definition, $add_drop_table = true)
+    public function buildAll(Definition $definition, $add_drop_table = true)
     {
         $config = $this->config + self::$defaultConfig;
 
@@ -75,6 +80,6 @@ abstract class AbstractDdlBuilder implements DdlBuilderInterface
         // CREATE TABLE 構文
         $sql .= $this->buildAllCreateTable($definition);
 
-        return $sql;
+        return trim($sql);
     }
 }

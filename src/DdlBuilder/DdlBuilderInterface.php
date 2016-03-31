@@ -1,9 +1,9 @@
 <?php
 namespace PruneMazui\DdlGenerator\DdlBuilder;
 
-use PruneMazui\DdlGenerator\TableDefinition\TableDefinition;
-use PruneMazui\DdlGenerator\TableDefinition\Table;
-use PruneMazui\DdlGenerator\TableDefinition\Schema;
+use PruneMazui\DdlGenerator\Definition\Definition;
+use PruneMazui\DdlGenerator\Definition\Table;
+use PruneMazui\DdlGenerator\Definition\Schema;
 
 /**
  * interface for DDL Builder
@@ -14,27 +14,27 @@ interface DdlBuilderInterface
     /**
      * build all query
      *
-     * @param TableDefinition $definition
+     * @param Definition $definition
      * @param boolean optional $add_drop_table
      * @return string
      */
-    public function buildAll(TableDefinition $definition, $add_drop_table = true);
+    public function buildAll(Definition $definition, $add_drop_table = true);
 
     /**
      * build all create table query
      *
-     * @param TableDefinition $definition
+     * @param Definition $definition
      * @return string
      */
-    public function buildAllCreateTable(TableDefinition $definition);
+    public function buildAllCreateTable(Definition $definition);
 
     /**
      * build all  drop table query
      *
-     * @param TableDefinition $definition
+     * @param Definition $definition
      * @return string
      */
-    public function buildAllDropTable(TableDefinition $definition);
+    public function buildAllDropTable(Definition $definition);
 
     /**
      * build single table create query
