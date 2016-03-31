@@ -66,15 +66,20 @@ class DefinitionFactory
     {
         $definition = new Definition();
 
-        // From table
+        // table
         foreach($this->table_datasources as $source) {
             $definition = $this->loadTableSource($source, $definition);
         }
 
         $definition->filter();
 
-        // @todo index
-        // @todo foreign key
+        foreach($this->index_datasources as $source) {
+            $definition = $this->loadIndexSource($source, $definition);
+        }
+
+        foreach($this->foregin_key_datasouces as $source) {
+            $definition = $this->loadForeignKeySource($source, $definition);
+        }
 
         return $definition;
     }
@@ -139,6 +144,18 @@ class DefinitionFactory
             }
         }
 
+        return $definition;
+    }
+
+    private function loadIndexSource(DataSourceInterface $source, Definition $definition)
+    {
+        // @todo index
+        return $definition;
+    }
+
+    private function loadForeignKeySource(DataSourceInterface $source, Definition $definition)
+    {
+        // @todo foreign key
         return $definition;
     }
 }

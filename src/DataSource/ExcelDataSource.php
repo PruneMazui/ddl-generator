@@ -4,14 +4,9 @@ namespace PruneMazui\DdlGenerator\DataSource;
 use PruneMazui\DdlGenerator\DdlGeneratorException;
 use PruneMazui\DdlGenerator\Definition\Definition;
 use PruneMazui\DdlGenerator\Definition\Table;
+
 /**
  * Table Definition Creater From PHPExcel
- *
- * $config => array(
- *    'filename' => $filename, (required)
- *    'tableSheets' =>
- * );
- *
  *
  * @author ko_tanaka
  */
@@ -39,8 +34,19 @@ class ExcelDataSource extends AbstractDataSource
             self::FEILD_COLUMN_DEFAULT         => "L",
         ),
         self::TYPE_INDEX => array(
+            self::FEILD_KEY_NAME           => "B",
+            self::FEILD_UNIQUE_INDEX       => "C",
+            self::FEILD_TABLE_NAME         => "D",
+            self::FEILD_COLUMN_NAME        => "E",
         ),
         self::TYPE_FOREIGN_KEY => array(
+            self::FEILD_KEY_NAME           => "B",
+            self::FEILD_TABLE_NAME         => "C",
+            self::FEILD_COLUMN_NAME        => "D",
+            self::FEILD_LOCKUP_TABLE_NAME  => "E",
+            self::FEILD_LOCKUP_COLUMN_NAME => "F",
+            self::FEILD_ON_UPDATE          => "G",
+            self::FEILD_ON_DELETE          => "H",
         ),
     );
 
