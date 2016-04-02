@@ -3,7 +3,7 @@ namespace PruneMazui\DdlGenerator\DataSource;
 
 use PruneMazui\DdlGenerator\DdlGeneratorException;
 use PruneMazui\DdlGenerator\Definition\Definition;
-use PruneMazui\DdlGenerator\Definition\Table;
+use PruneMazui\DdlGenerator\Definition\Rules\Table;
 
 /**
  * Table Definition Creater From PHPExcel

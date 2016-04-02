@@ -14,15 +14,18 @@ class DdlGenerateTest extends \PHPUnit_Framework_TestCase
      */
     public function flowAllTest()
     {
-        $datasource = new ExcelDataSource(array(
+        $table_datasource = new ExcelDataSource(array(
             'filename' => __DIR__ . '/../files/db_specifications.xlsx',
             'sheets'   => 'テーブル定義',
         ));
 
-        assertTrue($datasource instanceof DataSourceInterface);
+        assertTrue($table_datasource instanceof DataSourceInterface);
 
         $factory = new DefinitionFactory();
-        $definition = $factory->addTableDataSource($datasource)->create();
+        $definition = $factory
+            ->addTableDataSource($table_datasource)
+            ->create()
+        ;
 
         assertTrue($definition instanceof Definition);
 
@@ -31,5 +34,8 @@ class DdlGenerateTest extends \PHPUnit_Framework_TestCase
 
         assertTrue(is_string($content));
         assertNotEmpty($content);
+
+        assertContains('DROP TABLE', $content);
+        assertContains('CREATE TABLE', $content);
     }
 }

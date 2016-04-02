@@ -1,5 +1,5 @@
 <?php
-namespace PruneMazui\DdlGenerator\Definition;
+namespace PruneMazui\DdlGenerator\Definition\Rules;
 
 class Schema
 {
@@ -9,7 +9,7 @@ class Schema
     private $schema_name;
 
     /**
-     * @var \PruneMazui\DdlGenerator\Definition\Table[]
+     * @var \PruneMazui\DdlGenerator\Definition\Rules\Table[]
      */
     private $tables = array();
 
@@ -23,7 +23,7 @@ class Schema
 
     /**
      * unset non column table
-     * @return \PruneMazui\DdlGenerator\Definition\Schema
+     * @return \PruneMazui\DdlGenerator\Definition\Rules\Schema
      */
     public function filter()
     {
@@ -48,7 +48,7 @@ class Schema
      * ass schema
      * @param Table $table
      * @throws DdlGeneratorException
-     * @return \PruneMazui\DdlGenerator\Definition\Schema
+     * @return \PruneMazui\DdlGenerator\Definition\Rules\Schema
      */
     public function addTable(Table $table)
     {
@@ -62,7 +62,7 @@ class Schema
     }
 
     /**
-     * @return \PruneMazui\DdlGenerator\Definition\Table[]
+     * @return \PruneMazui\DdlGenerator\Definition\Rules\Table[]
      */
     public function getTables()
     {
@@ -72,7 +72,7 @@ class Schema
 
     /**
      * @param string $table_name
-     * @return \PruneMazui\DdlGenerator\Definition\Table
+     * @return \PruneMazui\DdlGenerator\Definition\Rules\Table
      */
     public function getTable($table_name)
     {

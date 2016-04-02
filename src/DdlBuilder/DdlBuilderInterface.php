@@ -2,8 +2,8 @@
 namespace PruneMazui\DdlGenerator\DdlBuilder;
 
 use PruneMazui\DdlGenerator\Definition\Definition;
-use PruneMazui\DdlGenerator\Definition\Table;
-use PruneMazui\DdlGenerator\Definition\Schema;
+use PruneMazui\DdlGenerator\Definition\Rules\Table;
+use PruneMazui\DdlGenerator\Definition\Rules\Schema;
 
 /**
  * interface for DDL Builder

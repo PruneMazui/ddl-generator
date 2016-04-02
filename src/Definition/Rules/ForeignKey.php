@@ -1,5 +1,5 @@
 <?php
-namespace PruneMazui\DdlGenerator\Definition;
+namespace PruneMazui\DdlGenerator\Definition\Rules;
 
 class ForeignKey
 {
@@ -75,7 +75,7 @@ class ForeignKey
      * @param string $column_name
      * @param string $lockup_column_name
      * @throws DdlGeneratorException
-     * @return \PruneMazui\DdlGenerator\Definition\ForeignKey
+     * @return \PruneMazui\DdlGenerator\Definition\Rules\ForeignKey
      */
     public function addColumn($column_name, $lockup_column_name)
     {

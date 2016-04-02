@@ -1,5 +1,5 @@
 <?php
-namespace PruneMazui\DdlGenerator\Definition;
+namespace PruneMazui\DdlGenerator\Definition\Rules;
 
 class Index
 {
@@ -43,7 +43,7 @@ class Index
      * add column
      * @param string $column_name
      * @throws DdlGeneratorException
-     * @return \PruneMazui\DdlGenerator\Definition\Index
+     * @return \PruneMazui\DdlGenerator\Definition\Rules\Index
      */
     public function addColumn($column_name)
     {

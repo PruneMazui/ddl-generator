@@ -3,6 +3,11 @@ namespace PruneMazui\DdlGenerator\Definition;
 
 use PruneMazui\DdlGenerator\DataSource\DataSourceInterface;
 use PruneMazui\DdlGenerator\DataSource\AbstractDataSource as Source;
+use PruneMazui\DdlGenerator\Definition\Rules\ForeignKey;
+use PruneMazui\DdlGenerator\Definition\Rules\Index;
+use PruneMazui\DdlGenerator\Definition\Rules\Column;
+use PruneMazui\DdlGenerator\Definition\Rules\Table;
+use PruneMazui\DdlGenerator\Definition\Rules\Schema;
 
 /**
  * Database Definition Factory

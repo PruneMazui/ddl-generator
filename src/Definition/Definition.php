@@ -2,6 +2,9 @@
 namespace PruneMazui\DdlGenerator\Definition;
 
 use PruneMazui\DdlGenerator\DdlGeneratorException;
+use PruneMazui\DdlGenerator\Definition\Rules\Schema;
+use PruneMazui\DdlGenerator\Definition\Rules\Index;
+use PruneMazui\DdlGenerator\Definition\Rules\ForeignKey;
 
 /**
  * database definition
@@ -11,23 +14,23 @@ use PruneMazui\DdlGenerator\DdlGeneratorException;
 class Definition
 {
     /**
-     * @var \PruneMazui\DdlGenerator\Definition\Schema[]
+     * @var \PruneMazui\DdlGenerator\Definition\Rules\Schema[]
      */
     private $schemas = array();
 
     /**
-     * @var \PruneMazui\DdlGenerator\Definition\ForeignKey[]
+     * @var \PruneMazui\DdlGenerator\Definition\Rules\ForeignKey[]
      */
     private $foreignKeys = array();
 
     /**
-     * @var \PruneMazui\DdlGenerator\Definition\Index[]
+     * @var \PruneMazui\DdlGenerator\Definition\Rules\Index[]
      */
     private $indexes = array();
 
     /**
      * execute filtering and checking to all tables
-     * @return \PruneMazui\DdlGenerator\Definition\Schema
+     * @return \PruneMazui\DdlGenerator\Definition\Rules\Schema
      */
     public function finalize()
     {
@@ -51,7 +54,7 @@ class Definition
     }
 
     /**
-     * @return \PruneMazui\DdlGenerator\Definition\Schema[]
+     * @return \PruneMazui\DdlGenerator\Definition\Rules\Schema[]
      */
     public function getSchemas()
     {
@@ -62,7 +65,7 @@ class Definition
     /**
      * Get One Schema
      * @param string $schema_name
-     * @return \PruneMazui\DdlGenerator\Definition\Schema|NULL
+     * @return \PruneMazui\DdlGenerator\Definition\Rules\Schema|NULL
      */
     public function getSchema($schema_name)
     {
