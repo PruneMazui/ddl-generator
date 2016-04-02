@@ -21,11 +21,17 @@ class Definition
     private $foreignKeys = array();
 
     /**
-     * unset non table schema
+     * @var \PruneMazui\DdlGenerator\Definition\Index[]
+     */
+    private $indexes = array();
+
+    /**
+     * execute filtering and checking to all tables
      * @return \PruneMazui\DdlGenerator\Definition\Schema
      */
-    public function filter()
+    public function finalize()
     {
+        // unset non table schema
         foreach($this->schemas as $key => $schema) {
             $schema->filter();
             if($schema->countTables() == 0) {
@@ -101,11 +107,37 @@ class Definition
         return $this;
     }
 
+    /**
+     * add index
+     * @param Index $index
+     * @throws DdlGeneratorException
+     * @return \PruneMazui\DdlGenerator\Definition\Definition
+     */
+    public function addIndex(Index $index)
+    {
+        $index_name = $index->getIndexName();
+        if(array_key_exists($index_name, $this->indexes)) {
+            throw new DdlGeneratorException("Index '{$index_name}' is already exist");
+        }
+
+        $this->indexes[$index_name] = $index;
+        return $this;
+    }
+
+    /**
+     * add foreign key
+     * @param ForeignKey $foreign_key
+     * @throws DdlGeneratorException
+     * @return \PruneMazui\DdlGenerator\Definition\Definition
+     */
     public function addForgienKey(ForeignKey $foreign_key)
     {
         $key_name = $foreign_key->getKeyName();
         if(array_key_exists($key_name, $this->foreignKeys)) {
             throw new DdlGeneratorException("Foreign Key '{$key_name}' is already exist");
         }
+
+        $this->foreignKeys[$key_name] = $foreign_key;
+        return $this;
     }
 }

@@ -64,6 +64,7 @@ class DefinitionFactory
      */
     public function create()
     {
+
         // @todo logger interface
 
         $definition = new Definition();
@@ -73,8 +74,6 @@ class DefinitionFactory
             $definition = $this->loadTableSource($source, $definition);
         }
 
-        $definition->filter();
-
         foreach($this->index_datasources as $source) {
             $definition = $this->loadIndexSource($source, $definition);
         }
@@ -83,7 +82,23 @@ class DefinitionFactory
             $definition = $this->loadForeignKeySource($source, $definition);
         }
 
-        return $definition;
+        return $definition->finalize();
+    }
+
+    /**
+     * @param DataSourceInterface $source
+     * @return \Closure
+     */
+    private function createClosureGetFeildData(DataSourceInterface $source)
+    {
+        return function ($row, $feild) use ($source) {
+            $key = $source->getKeyMap($feild);
+
+            if (isset($row[$key])) {
+                return $row[$key];
+            }
+            return null;
+        };
     }
 
     /**
@@ -92,14 +107,7 @@ class DefinitionFactory
      */
     private function loadTableSource(DataSourceInterface $source, Definition $definition)
     {
-        $getData = function ($row, $feild) use ($source) {
-            $key = $source->getKeyMap($feild);
-
-            if (isset($row[$key])) {
-                return $row[$key];
-            }
-            return null;
-        };
+        $getData = $this->createClosureGetFeildData($source);
 
         $table = null;
         $schema = null;
@@ -151,13 +159,71 @@ class DefinitionFactory
 
     private function loadIndexSource(DataSourceInterface $source, Definition $definition)
     {
-        // @todo index
+        $getData = $this->createClosureGetFeildData($source);
+
+        $index = null;
+
+        foreach($source->read() as $row) {
+            $index_name = $getData($row, Source::FEILD_INDEX_NAME);
+
+            if(strlen($index_name)) {
+                $is_unique_index = $getData($row, Source::FEILD_UNIQUE_INDEX);
+                $schema_name = $getData($row, Source::FEILD_SCHEMA_NAME);
+                $table_name = $getData($row, Source::FEILD_TABLE_NAME);
+
+                $index = new Index($index_name, $is_unique_index, $schema_name, $table_name);
+                $definition->addIndex($index);
+            }
+
+            if(! $index instanceof Index) {
+                continue;
+            }
+
+            $column_name = $getData($row, Source::FEILD_COLUMN_NAME);
+            if(strlen($column_name)) {
+                $index->addColumn($column_name);
+            }
+        }
+
         return $definition;
     }
 
     private function loadForeignKeySource(DataSourceInterface $source, Definition $definition)
     {
-        // @todo foreign key
+        $getData = $this->createClosureGetFeildData($source);
+
+        $foreign_key = null;
+
+        foreach($source->read() as $row) {
+            $key_name = $getData($row, Source::FEILD_KEY_NAME);
+
+            if(strlen($key_name)) {
+                $schema_name = $getData($row, Source::FEILD_SCHEMA_NAME);
+                $table_name = $getData($row, Source::FEILD_TABLE_NAME);
+                $lockup_schema_name = $getData($row, Source::FEILD_LOCKUP_SCHEMA_NAME);
+                $lockup_table_name = $getData($row, Source::FEILD_LOCKUP_TABLE_NAME);
+                $on_update = $getData($row, Source::FEILD_ON_UPDATE);
+                $on_delete = $getData($row, Source::FEILD_ON_DELETE);
+
+                $foreign_key = new ForeignKey($key_name, $schema_name, $table_name,
+                    $lockup_schema_name, $lockup_table_name, $on_update, $on_delete);
+
+                $definition->addForgienKey($foreign_key);
+            }
+
+            if(! $foreign_key instanceof ForeignKey) {
+                continue;
+            }
+
+            $column_name = $getData($row, Source::FEILD_COLUMN_NAME);
+            if(strlen($column_name)) {
+                $lockup_column_name = $getData($row, Source::FEILD_LOCKUP_COLUMN_NAME);
+                $foreign_key->addColumn($column_name, $lockup_column_name);
+            }
+        }
+
         return $definition;
     }
+
+
 }

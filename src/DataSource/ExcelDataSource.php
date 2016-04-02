@@ -35,7 +35,7 @@ class ExcelDataSource extends AbstractDataSource
         ),
         self::TYPE_INDEX => array(
             // @todo index comment supported by mysql >= 5.5
-            self::FEILD_KEY_NAME           => "B",
+            self::FEILD_INDEX_NAME         => "B",
             self::FEILD_UNIQUE_INDEX       => "C",
             self::FEILD_SCHEMA_NAME        => "D",
             self::FEILD_TABLE_NAME         => "E",

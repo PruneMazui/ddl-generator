@@ -30,6 +30,7 @@ abstract class AbstractDataSource extends AbstractDdlGenerator implements DataSo
     const FEILD_LOCKUP_COLUMN_NAME = 'lockup_column_name';
     const FEILD_ON_UPDATE = 'on_update';
     const FEILD_ON_DELETE = 'on_delete';
+    const FEILD_INDEX_NAME = 'index_name';
     const FEILD_UNIQUE_INDEX = 'unique_index';
 
     protected $datasource_type = self::TYPE_TABLE; // default

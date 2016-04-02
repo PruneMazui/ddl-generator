@@ -17,15 +17,22 @@ class ForeignKey
 
     private $lockupColumnNameList = array();
 
+    private $onUpdate;
+
+    private $onDelete;
+
     /**
      * @param string $key_name
      * @param string $schema_name
      * @param string $table_name
      * @param string $lockup_schema_name
      * @param string $lockup_table_name
+     * @param string $on_update
+     * @param string $on_delete
      * @throws DdlGeneratorException
      */
-    public function __construct($key_name, $schema_name, $table_name, $lockup_schema_name, $lockup_table_name)
+    public function __construct($key_name, $schema_name, $table_name,
+            $lockup_schema_name, $lockup_table_name, $on_update, $on_delete)
     {
         if(! strlen($key_name)) {
             throw new DdlGeneratorException('Key Name is not allow empty.');
@@ -51,6 +58,16 @@ class ForeignKey
             throw new DdlGeneratorException('Lockup Table Name is not allow empty.');
         }
         $this->lockupTableName = $lockup_table_name;
+
+        if(! strlen($on_update)) {
+            throw new DdlGeneratorException('On Update is not allow empty.');
+        }
+        $this->onUpdate = $on_update;
+
+        if(! strlen($on_delete)) {
+            throw new DdlGeneratorException('On Delete is not allow empty.');
+        }
+        $this->onDelete = $on_delete;
     }
 
     /**
