@@ -34,19 +34,23 @@ class ExcelDataSource extends AbstractDataSource
             self::FEILD_COLUMN_DEFAULT         => "L",
         ),
         self::TYPE_INDEX => array(
+            // @todo index comment supported by mysql >= 5.5
             self::FEILD_KEY_NAME           => "B",
             self::FEILD_UNIQUE_INDEX       => "C",
-            self::FEILD_TABLE_NAME         => "D",
-            self::FEILD_COLUMN_NAME        => "E",
+            self::FEILD_SCHEMA_NAME        => "D",
+            self::FEILD_TABLE_NAME         => "E",
+            self::FEILD_COLUMN_NAME        => "F",
         ),
         self::TYPE_FOREIGN_KEY => array(
             self::FEILD_KEY_NAME           => "B",
-            self::FEILD_TABLE_NAME         => "C",
-            self::FEILD_COLUMN_NAME        => "D",
-            self::FEILD_LOCKUP_TABLE_NAME  => "E",
-            self::FEILD_LOCKUP_COLUMN_NAME => "F",
-            self::FEILD_ON_UPDATE          => "G",
-            self::FEILD_ON_DELETE          => "H",
+            self::FEILD_SCHEMA_NAME        => "C",
+            self::FEILD_TABLE_NAME         => "D",
+            self::FEILD_COLUMN_NAME        => "E",
+            self::FEILD_LOCKUP_SCHEMA_NAME => "F",
+            self::FEILD_LOCKUP_TABLE_NAME  => "G",
+            self::FEILD_LOCKUP_COLUMN_NAME => "H",
+            self::FEILD_ON_UPDATE          => "I",
+            self::FEILD_ON_DELETE          => "J",
         ),
     );
 

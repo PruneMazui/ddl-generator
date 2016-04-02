@@ -16,6 +16,11 @@ class Definition
     private $schemas = array();
 
     /**
+     * @var \PruneMazui\DdlGenerator\Definition\ForeignKey[]
+     */
+    private $foreignKeys = array();
+
+    /**
      * unset non table schema
      * @return \PruneMazui\DdlGenerator\Definition\Schema
      */
@@ -94,5 +99,13 @@ class Definition
 
         $this->schemas[$schema_name] = $schema;
         return $this;
+    }
+
+    public function addForgienKey(ForeignKey $foreign_key)
+    {
+        $key_name = $foreign_key->getKeyName();
+        if(array_key_exists($key_name, $this->foreignKeys)) {
+            throw new DdlGeneratorException("Foreign Key '{$key_name}' is already exist");
+        }
     }
 }

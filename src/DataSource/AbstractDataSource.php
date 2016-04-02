@@ -25,6 +25,7 @@ abstract class AbstractDataSource extends AbstractDdlGenerator implements DataSo
     const FEILD_COLUMN_AUTO_INCREMENT = 'column_auto_increament';
     const FEILD_COLUMN_DEFAULT = 'column_default';
     const FEILD_KEY_NAME = 'key_name';
+    const FEILD_LOCKUP_SCHEMA_NAME = 'lockup_schema_name';
     const FEILD_LOCKUP_TABLE_NAME = 'lockup_table_name';
     const FEILD_LOCKUP_COLUMN_NAME = 'lockup_column_name';
     const FEILD_ON_UPDATE = 'on_update';

@@ -64,6 +64,8 @@ class DefinitionFactory
      */
     public function create()
     {
+        // @todo logger interface
+
         $definition = new Definition();
 
         // table
