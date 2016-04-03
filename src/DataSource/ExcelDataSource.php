@@ -21,35 +21,35 @@ class ExcelDataSource extends AbstractDataSource
 
     protected static $defaultKeyMap = array(
         self::TYPE_TABLE => array(
-            self::FEILD_SCHEMA_NAME            => "B",
-            self::FEILD_TABLE_NAME             => "C",
-            self::FEILD_TABLE_COMMENT          => "D",
-            self::FEILD_COLUMN_NAME            => "E",
-            self::FEILD_COLUMN_COMMENT         => "F",
-            self::FEILD_COLUMN_DATA_TYPE       => "G",
-            self::FEILD_COLUMN_LENGTH          => "H",
-            self::FEILD_COLUMN_REQUIRED        => "I",
-            self::FEILD_COLUMN_PRIMARY_KEY     => "J",
-            self::FEILD_COLUMN_AUTO_INCREMENT  => "K",
-            self::FEILD_COLUMN_DEFAULT         => "L",
+            Feild::SCHEMA_NAME            => "B",
+            Feild::TABLE_NAME             => "C",
+            Feild::TABLE_COMMENT          => "D",
+            Feild::COLUMN_NAME            => "E",
+            Feild::COLUMN_COMMENT         => "F",
+            Feild::COLUMN_DATA_TYPE       => "G",
+            Feild::COLUMN_LENGTH          => "H",
+            Feild::COLUMN_REQUIRED        => "I",
+            Feild::COLUMN_PRIMARY_KEY     => "J",
+            Feild::COLUMN_AUTO_INCREMENT  => "K",
+            Feild::COLUMN_DEFAULT         => "L",
         ),
         self::TYPE_INDEX => array(
-            self::FEILD_INDEX_NAME         => "B",
-            self::FEILD_UNIQUE_INDEX       => "C",
-            self::FEILD_SCHEMA_NAME        => "D",
-            self::FEILD_TABLE_NAME         => "E",
-            self::FEILD_COLUMN_NAME        => "F",
+            Feild::INDEX_NAME         => "B",
+            Feild::UNIQUE_INDEX       => "C",
+            Feild::SCHEMA_NAME        => "D",
+            Feild::TABLE_NAME         => "E",
+            Feild::COLUMN_NAME        => "F",
         ),
         self::TYPE_FOREIGN_KEY => array(
-            self::FEILD_KEY_NAME           => "B",
-            self::FEILD_SCHEMA_NAME        => "C",
-            self::FEILD_TABLE_NAME         => "D",
-            self::FEILD_COLUMN_NAME        => "E",
-            self::FEILD_LOCKUP_SCHEMA_NAME => "F",
-            self::FEILD_LOCKUP_TABLE_NAME  => "G",
-            self::FEILD_LOCKUP_COLUMN_NAME => "H",
-            self::FEILD_ON_UPDATE          => "I",
-            self::FEILD_ON_DELETE          => "J",
+            Feild::KEY_NAME           => "B",
+            Feild::SCHEMA_NAME        => "C",
+            Feild::TABLE_NAME         => "D",
+            Feild::COLUMN_NAME        => "E",
+            Feild::LOCKUP_SCHEMA_NAME => "F",
+            Feild::LOCKUP_TABLE_NAME  => "G",
+            Feild::LOCKUP_COLUMN_NAME => "H",
+            Feild::ON_UPDATE          => "I",
+            Feild::ON_DELETE          => "J",
         ),
     );
 
@@ -73,6 +73,7 @@ class ExcelDataSource extends AbstractDataSource
         }
 
         $ret = array();
+        $key_map = $this->getKeyMap();
 
         foreach($sheets as $sheet_name) {
             if(! strlen($sheet_name)) {
@@ -93,7 +94,7 @@ class ExcelDataSource extends AbstractDataSource
                 foreach ($row->getCellIterator() as $col_number => $cell) {
                     $row_data[$col_number] = $cell->getValue();
                 }
-                $ret[] = $row_data;
+                $ret[] = new RowData($row_data, $key_map);
             }
         }
 

@@ -12,7 +12,6 @@ use PruneMazui\DdlGenerator\Definition\Rules\Table;
  */
 class CsvDataSource extends AbstractDataSource
 {
-
     protected static $defaultConfig = array(
         'filename' => '',
         'format' => 'UTF-8',
@@ -22,35 +21,35 @@ class CsvDataSource extends AbstractDataSource
 
     protected static $defaultKeyMap = array(
         self::TYPE_TABLE => array(
-            self::FEILD_SCHEMA_NAME           => 0,
-            self::FEILD_TABLE_NAME            => 1,
-            self::FEILD_TABLE_COMMENT         => 2,
-            self::FEILD_COLUMN_NAME           => 3,
-            self::FEILD_COLUMN_COMMENT        => 4,
-            self::FEILD_COLUMN_DATA_TYPE      => 5,
-            self::FEILD_COLUMN_LENGTH         => 6,
-            self::FEILD_COLUMN_REQUIRED       => 7,
-            self::FEILD_COLUMN_PRIMARY_KEY    => 8,
-            self::FEILD_COLUMN_AUTO_INCREMENT => 9,
-            self::FEILD_COLUMN_DEFAULT        => 10,
+            Feild::SCHEMA_NAME           => 0,
+            Feild::TABLE_NAME            => 1,
+            Feild::TABLE_COMMENT         => 2,
+            Feild::COLUMN_NAME           => 3,
+            Feild::COLUMN_COMMENT        => 4,
+            Feild::COLUMN_DATA_TYPE      => 5,
+            Feild::COLUMN_LENGTH         => 6,
+            Feild::COLUMN_REQUIRED       => 7,
+            Feild::COLUMN_PRIMARY_KEY    => 8,
+            Feild::COLUMN_AUTO_INCREMENT => 9,
+            Feild::COLUMN_DEFAULT        => 10,
         ),
         self::TYPE_INDEX => array(
-            self::FEILD_INDEX_NAME => "B",
-            self::FEILD_UNIQUE_INDEX => "C",
-            self::FEILD_SCHEMA_NAME => "D",
-            self::FEILD_TABLE_NAME => "E",
-            self::FEILD_COLUMN_NAME => "F"
+            Feild::INDEX_NAME   => 0,
+            Feild::UNIQUE_INDEX => 1,
+            Feild::SCHEMA_NAME  => 2,
+            Feild::TABLE_NAME   => 3,
+            Feild::COLUMN_NAME  => 4,
         ),
         self::TYPE_FOREIGN_KEY => array(
-            self::FEILD_KEY_NAME           => 0,
-            self::FEILD_SCHEMA_NAME        => 1,
-            self::FEILD_TABLE_NAME         => 2,
-            self::FEILD_COLUMN_NAME        => 3,
-            self::FEILD_LOCKUP_SCHEMA_NAME => 4,
-            self::FEILD_LOCKUP_TABLE_NAME  => 5,
-            self::FEILD_LOCKUP_COLUMN_NAME => 6,
-            self::FEILD_ON_UPDATE          => 7,
-            self::FEILD_ON_DELETE          => 8,
+            Feild::KEY_NAME           => 0,
+            Feild::SCHEMA_NAME        => 1,
+            Feild::TABLE_NAME         => 2,
+            Feild::COLUMN_NAME        => 3,
+            Feild::LOCKUP_SCHEMA_NAME => 4,
+            Feild::LOCKUP_TABLE_NAME  => 5,
+            Feild::LOCKUP_COLUMN_NAME => 6,
+            Feild::ON_UPDATE          => 7,
+            Feild::ON_DELETE          => 8,
         )
     );
 
@@ -76,9 +75,7 @@ class CsvDataSource extends AbstractDataSource
     }
 
     /**
-     *
      * {@inheritDoc}
-     *
      * @see \PruneMazui\DdlGenerator\DataSource\DataSourceInterface::read()
      */
     public function read()
@@ -97,6 +94,7 @@ class CsvDataSource extends AbstractDataSource
 
         $ret = array();
         $line_count = 0;
+        $key_map = $this->getKeyMap();
 
         while (! feof($fp)) {
             $line = fgetcsv($fp);
@@ -107,7 +105,9 @@ class CsvDataSource extends AbstractDataSource
                 continue;
             }
 
-            $ret[$line_count] = $line;
+            if(is_array($line)) {
+                $ret[$line_count] = new RowData($line, $key_map);
+            }
             $line_count++;
         }
 

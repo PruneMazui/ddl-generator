@@ -8,6 +8,7 @@ use PruneMazui\DdlGenerator\Definition\Rules\Index;
 use PruneMazui\DdlGenerator\Definition\Rules\Column;
 use PruneMazui\DdlGenerator\Definition\Rules\Table;
 use PruneMazui\DdlGenerator\Definition\Rules\Schema;
+use PruneMazui\DdlGenerator\DataSource\Feild;
 
 /**
  * Database Definition Factory
@@ -92,33 +93,15 @@ class DefinitionFactory
 
     /**
      * @param DataSourceInterface $source
-     * @return \Closure
-     */
-    private function createClosureGetFeildData(DataSourceInterface $source)
-    {
-        return function ($row, $feild) use ($source) {
-            $key = $source->getKeyMap($feild);
-
-            if (isset($row[$key])) {
-                return $row[$key];
-            }
-            return null;
-        };
-    }
-
-    /**
-     * @param DataSourceInterface $source
      * @param Definition $definition
      */
     private function loadTableSource(DataSourceInterface $source, Definition $definition)
     {
-        $getData = $this->createClosureGetFeildData($source);
-
         $table = null;
         $schema = null;
 
         foreach($source->read() as $row) {
-            $schema_name = $getData($row, Source::FEILD_SCHEMA_NAME);
+            $schema_name = $row->getFeild(Feild::SCHEMA_NAME);
             if(is_null($schema) || $schema_name) {
                 $schema = $definition->getSchema($schema_name);
                 if (is_null($schema)) {
@@ -127,11 +110,11 @@ class DefinitionFactory
                 }
             }
 
-            $table_name = $getData($row, Source::FEILD_TABLE_NAME);
+            $table_name = $row->getFeild(Feild::TABLE_NAME);
             if (strlen($table_name)) {
                 $table = $schema->getTable($table_name);
                 if(is_null($table)) {
-                    $table_comment = $getData($row, Source::FEILD_TABLE_COMMENT);
+                    $table_comment = $row->getFeild(Feild::TABLE_COMMENT);
                     $table = new Table($table_name, $table_comment);
                     $schema->addTable($table);
                 }
@@ -141,19 +124,19 @@ class DefinitionFactory
                 continue;
             }
 
-            $column_name = $getData($row, Source::FEILD_COLUMN_NAME);
+            $column_name = $row->getFeild(Feild::COLUMN_NAME);
             if (strlen($column_name)) {
-                $data_type = $getData($row, Source::FEILD_COLUMN_DATA_TYPE);
-                $required = $getData($row, Source::FEILD_COLUMN_REQUIRED);
-                $length = $getData($row, Source::FEILD_COLUMN_LENGTH);
-                $default = $getData($row, Source::FEILD_COLUMN_DEFAULT);
-                $comment = $getData($row, Source::FEILD_COLUMN_COMMENT);
-                $is_auto_increment = $getData($row, Source::FEILD_COLUMN_AUTO_INCREMENT);
+                $data_type = $row->getFeild(Feild::COLUMN_DATA_TYPE);
+                $required = $row->getFeild(Feild::COLUMN_REQUIRED);
+                $length = $row->getFeild(Feild::COLUMN_LENGTH);
+                $default = $row->getFeild(Feild::COLUMN_DEFAULT);
+                $comment = $row->getFeild(Feild::COLUMN_COMMENT);
+                $is_auto_increment = $row->getFeild(Feild::COLUMN_AUTO_INCREMENT);
 
                 $column = new Column($column_name, $data_type, $required, $length, $default, $comment, $is_auto_increment);
                 $table->addColumn($column);
 
-                if ($getData($row, Source::FEILD_COLUMN_PRIMARY_KEY)) {
+                if ($row->getFeild(Feild::COLUMN_PRIMARY_KEY)) {
                     $table->addPrimaryKey($column_name);
                 }
             }
@@ -164,17 +147,15 @@ class DefinitionFactory
 
     private function loadIndexSource(DataSourceInterface $source, Definition $definition)
     {
-        $getData = $this->createClosureGetFeildData($source);
-
         $index = null;
 
         foreach($source->read() as $row) {
-            $index_name = $getData($row, Source::FEILD_INDEX_NAME);
+            $index_name = $row->getFeild(Feild::INDEX_NAME);
 
             if(strlen($index_name)) {
-                $is_unique_index = $getData($row, Source::FEILD_UNIQUE_INDEX);
-                $schema_name = $getData($row, Source::FEILD_SCHEMA_NAME);
-                $table_name = $getData($row, Source::FEILD_TABLE_NAME);
+                $is_unique_index = $row->getFeild(Feild::UNIQUE_INDEX);
+                $schema_name = $row->getFeild(Feild::SCHEMA_NAME);
+                $table_name = $row->getFeild(Feild::TABLE_NAME);
 
                 $index = new Index($index_name, $is_unique_index, $schema_name, $table_name);
                 $definition->addIndex($index);
@@ -184,7 +165,7 @@ class DefinitionFactory
                 continue;
             }
 
-            $column_name = $getData($row, Source::FEILD_COLUMN_NAME);
+            $column_name = $row->getFeild(Feild::COLUMN_NAME);
             if(strlen($column_name)) {
                 $index->addColumn($column_name);
             }
@@ -195,20 +176,18 @@ class DefinitionFactory
 
     private function loadForeignKeySource(DataSourceInterface $source, Definition $definition)
     {
-        $getData = $this->createClosureGetFeildData($source);
-
         $foreign_key = null;
 
         foreach($source->read() as $row) {
-            $key_name = $getData($row, Source::FEILD_KEY_NAME);
+            $key_name = $row->getFeild(Feild::KEY_NAME);
 
             if(strlen($key_name)) {
-                $schema_name = $getData($row, Source::FEILD_SCHEMA_NAME);
-                $table_name = $getData($row, Source::FEILD_TABLE_NAME);
-                $lockup_schema_name = $getData($row, Source::FEILD_LOCKUP_SCHEMA_NAME);
-                $lockup_table_name = $getData($row, Source::FEILD_LOCKUP_TABLE_NAME);
-                $on_update = $getData($row, Source::FEILD_ON_UPDATE);
-                $on_delete = $getData($row, Source::FEILD_ON_DELETE);
+                $schema_name = $row->getFeild(Feild::SCHEMA_NAME);
+                $table_name = $row->getFeild(Feild::TABLE_NAME);
+                $lockup_schema_name = $row->getFeild(Feild::LOCKUP_SCHEMA_NAME);
+                $lockup_table_name = $row->getFeild(Feild::LOCKUP_TABLE_NAME);
+                $on_update = $row->getFeild(Feild::ON_UPDATE);
+                $on_delete = $row->getFeild(Feild::ON_DELETE);
 
                 $foreign_key = new ForeignKey($key_name, $schema_name, $table_name,
                     $lockup_schema_name, $lockup_table_name, $on_update, $on_delete);
@@ -220,9 +199,9 @@ class DefinitionFactory
                 continue;
             }
 
-            $column_name = $getData($row, Source::FEILD_COLUMN_NAME);
+            $column_name = $row->getFeild(Feild::COLUMN_NAME);
             if(strlen($column_name)) {
-                $lockup_column_name = $getData($row, Source::FEILD_LOCKUP_COLUMN_NAME);
+                $lockup_column_name = $row->getFeild(Feild::LOCKUP_COLUMN_NAME);
                 $foreign_key->addColumn($column_name, $lockup_column_name);
             }
         }

@@ -9,7 +9,7 @@ namespace PruneMazui\DdlGenerator\DataSource;
 interface DataSourceInterface
 {
     /**
-     * @return string[][]
+     * @return \PruneMazui\DdlGenerator\DataSource\RowData[]
      */
     public function read();
 
@@ -21,9 +21,9 @@ interface DataSourceInterface
     public function setDataSourceType($type);
 
     /**
-     * Get key mapping
+     * get releation from feild name to array offset
+     *
      * @return array
      */
-    public function getKeyMap($feild = null);
-
+    public function getKeyMap();
 }

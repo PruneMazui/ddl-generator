@@ -24,7 +24,7 @@ class Index
         if(! strlen($index_name)) {
             throw new DdlGeneratorException('Index Name is not allow empty.');
         }
-        $this->index = $index_name;
+        $this->indexName = $index_name;
 
         $this->isUniqueIndex = !! $is_unique_index;
 
