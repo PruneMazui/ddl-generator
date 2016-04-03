@@ -1,6 +1,8 @@
 <?php
 namespace PruneMazui\DdlGenerator\Definition\Rules;
 
+use PruneMazui\DdlGenerator\DdlGeneratorException;
+
 /**
  * Column
  *

@@ -6,7 +6,7 @@ use PruneMazui\DdlGenerator\Definition\Definition;
 use PruneMazui\DdlGenerator\Definition\Rules\Table;
 
 /**
- * Table Definition Creater From PHPExcel
+ * Excel Table Definition
  *
  * @author ko_tanaka
  */
@@ -34,7 +34,6 @@ class ExcelDataSource extends AbstractDataSource
             self::FEILD_COLUMN_DEFAULT         => "L",
         ),
         self::TYPE_INDEX => array(
-            // @todo index comment supported by mysql >= 5.5
             self::FEILD_INDEX_NAME         => "B",
             self::FEILD_UNIQUE_INDEX       => "C",
             self::FEILD_SCHEMA_NAME        => "D",

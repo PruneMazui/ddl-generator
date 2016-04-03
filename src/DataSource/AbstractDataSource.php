@@ -13,6 +13,7 @@ abstract class AbstractDataSource extends AbstractDdlGenerator implements DataSo
     const TYPE_FOREIGN_KEY = 'foreign_key';
     const TYPE_INDEX = 'index';
 
+    // @todo index comment supported by mysql >= 5.5
     const FEILD_SCHEMA_NAME = 'schema_name';
     const FEILD_TABLE_NAME = 'table_name';
     const FEILD_TABLE_COMMENT = 'table_comment';
