@@ -28,6 +28,15 @@ class Definition
      */
     private $indexes = array();
 
+    private function buildKeyName($key_name, $schema_name, $table_name)
+    {
+        if(strlen($schema_name)) {
+            $schema_name = $schema_name . '.';
+        }
+
+        return "{$schema_name}{$table_name}.{$key_name}";
+    }
+
     /**
      * execute filtering and checking to all tables
      * @return \PruneMazui\DdlGenerator\Definition\Rules\Schema
@@ -42,12 +51,26 @@ class Definition
             }
         }
 
+        $key_names = array();
+
         // unset non column index
         foreach($this->indexes as $key => $index) {
             if($index->countColumns() == 0) {
                 // @todo log notice
                 unset($this->indexes[$key]);
             }
+
+            // check conflict key name
+            $unique_key_name = $this->buildKeyName(
+                $index->getIndexName(),
+                $index->getSchemaName(),
+                $index->getTableName()
+            );
+
+            if(array_key_exists($unique_key_name, $key_names)) {
+                throw new DdlGeneratorException('key name conflict : ' . $unique_key_name);
+            }
+            $key_names[$unique_key_name] = $unique_key_name;
 
             // check has column
             if(! $this->hasSchema($index->getSchemaName())) {
@@ -73,6 +96,18 @@ class Definition
                 // @todo log notice
                 unset($this->foreignKeys[$key]);
             }
+
+            // check conflict key name
+            $unique_key_name = $this->buildKeyName(
+                $foreign_key->getKeyName(),
+                $foreign_key->getSchemaName(),
+                $foreign_key->getTableName()
+            );
+
+            if(array_key_exists($unique_key_name, $key_names)) {
+                throw new DdlGeneratorException('key name conflict : ' . $unique_key_name);
+            }
+            $key_names[$unique_key_name] = $unique_key_name;
 
             // check has column
             if(! $this->hasSchema($foreign_key->getSchemaName())) {
@@ -112,6 +147,7 @@ class Definition
 
                 // @todo log column dataType is not matched
             }
+
         }
 
         return $this;

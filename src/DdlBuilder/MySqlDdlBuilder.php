@@ -93,7 +93,7 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
                 $primary_key[$key] = $this->quoteIdentifier($value);
             }
 
-            $sql .= ',' . $eol . $eol . $indent . 'PRIMARY KEY ( ' . implode(', ', $primary_key) . ' )' . $eol;
+            $sql .= ',' . $eol . $eol . $indent . 'PRIMARY KEY (' . implode(', ', $primary_key) . ')' . $eol;
         }
 
         $sql .= ')';
@@ -232,7 +232,7 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
 
         // ignore schema
         $sql = "ALTER TABLE " . $this->quoteIdentifier($foreign_key->getTableName())
-            . " ADD CONSRAINT " . $this->quoteIdentifier($foreign_key->getKeyName())
+            . " ADD CONSTRAINT " . $this->quoteIdentifier($foreign_key->getKeyName())
             . " FOREIGN KEY (" . implode(", ", $columns) . ")"
             . " REFERENCES " . $this->quoteIdentifier($foreign_key->getLockupTableName())
             . " (" . implode(", ", $lookup_columns) . ")"
