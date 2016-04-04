@@ -7,7 +7,7 @@ use PruneMazui\DdlGenerator\Definition\DefinitionFactory;
 use PruneMazui\DdlGenerator\Definition\Definition;
 use PruneMazui\DdlGenerator\DataSource\CsvDataSource;
 
-class DdlGenerateTest extends \PHPUnit_Framework_TestCase
+class DdlGenerateTest extends AbstractTestCase
 {
     /**
      * @test
@@ -51,5 +51,14 @@ class DdlGenerateTest extends \PHPUnit_Framework_TestCase
 
         assertContains('DROP TABLE', $content);
         assertContains('CREATE TABLE', $content);
+        assertContains('CREATE INDEX', $content);
+        assertContains('ALTER TABLE', $content);
+
+        if(! $this->hasMySql()) {
+            $this->markTestSkipped('MySQL Connection is not defined');
+        }
+
+        $db = $this->getMySql();
+        $db->exec($content);
     }
 }

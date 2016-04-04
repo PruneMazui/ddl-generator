@@ -68,7 +68,7 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
         $schemas = $definition->getSchemas();
 
         if(count($schemas) > 1) {
-            throw new DdlGeneratorException('There are no schemata in MySQL. Schema count is grater than 1.');
+            throw new DdlGeneratorException('There are no schema in MySQL. Schema count is grater than 1.');
         }
 
         return parent::buildAll($definition, $add_drop_table);
