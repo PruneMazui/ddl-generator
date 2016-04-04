@@ -20,14 +20,10 @@ class Feild
     const COLUMN_AUTO_INCREMENT = 'column_auto_increament';
     const COLUMN_DEFAULT = 'column_default';
     const KEY_NAME = 'key_name';
-    const LOCKUP_SCHEMA_NAME = 'lockup_schema_name';
-    const LOCKUP_TABLE_NAME = 'lockup_table_name';
-    const LOCKUP_COLUMN_NAME = 'lockup_column_name';
+    const LOOKUP_SCHEMA_NAME = 'lookup_schema_name';
+    const LOOKUP_TABLE_NAME = 'lookup_table_name';
+    const LOOKUP_COLUMN_NAME = 'lookup_column_name';
     const ON_UPDATE = 'on_update';
     const ON_DELETE = 'on_delete';
-    const INDEX_NAME = 'index_name';
     const UNIQUE_INDEX = 'unique_index';
-
-    private function __construct()
-    {}
 }

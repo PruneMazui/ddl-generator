@@ -82,23 +82,5 @@ class AllFlowTest extends AbstractTestCase
                 assertContains($column->getColumnName(), $columns);
             }
         }
-
-        // create index
-        foreach($definition->getIndexes() as $index) {
-            $keys = $db->fetchAll("SHOW KEYS FROM {$index->getTableName()}");
-            assertCount(1, $keys);
-        }
-        $db->getConnection()->exec($builder->buildAllCreateIndex($definition));
-        foreach($definition->getIndexes() as $index) {
-            $keys = $db->fetchAll("SHOW KEYS FROM {$index->getTableName()}");
-            assertGreaterThan(2, $keys);
-        }
-
-        // create foreign keys
-        $db->getConnection()->exec($builder->buildAllCreateForeignKey($definition));
-        foreach($definition->getForeignKeys() as $foreign_key) {
-            $keys = $db->fetchColmun("SHOW KEYS FROM {$foreign_key->getTableName()}");
-            assertGreaterThan(2, $keys);
-        }
     }
 }

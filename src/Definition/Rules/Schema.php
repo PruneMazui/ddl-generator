@@ -28,7 +28,9 @@ class Schema
     public function filter()
     {
         foreach($this->tables as $key => $table) {
+            $table->filter();
             if($table->countColumns() == 0) {
+                // @todo logging
                 unset($this->tables[$key]);
             }
         }

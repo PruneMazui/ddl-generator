@@ -211,8 +211,8 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
         }
 
         // ignore schema
-        $sql .= "INDEX " . $this->quoteIdentifier($index->getIndexName())
-            . " ON " . $this->quoteIdentifier($index->getTableName());
+        $sql .= "INDEX " . $this->quoteIdentifier($index->getKeyName())
+            . " ON " . $this->quoteIdentifier($index->getTable()->getTableName());
 
         $columns = array_map(array($this, 'quoteIdentifier'), $index->getColumnNameList());
 
@@ -228,13 +228,13 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
     public function buildCreateForeignKey(ForeignKey $foreign_key)
     {
         $columns = array_map(array($this, 'quoteIdentifier'), $foreign_key->getColumnNameList());
-        $lookup_columns = array_map(array($this, 'quoteIdentifier'), $foreign_key->getLockupColumnNameList());
+        $lookup_columns = array_map(array($this, 'quoteIdentifier'), $foreign_key->getLookupColumnNameList());
 
         // ignore schema
-        $sql = "ALTER TABLE " . $this->quoteIdentifier($foreign_key->getTableName())
+        $sql = "ALTER TABLE " . $this->quoteIdentifier($foreign_key->getTable()->getTableName())
             . " ADD CONSTRAINT " . $this->quoteIdentifier($foreign_key->getKeyName())
             . " FOREIGN KEY (" . implode(", ", $columns) . ")"
-            . " REFERENCES " . $this->quoteIdentifier($foreign_key->getLockupTableName())
+            . " REFERENCES " . $this->quoteIdentifier($foreign_key->getLookupTable()->getTableName())
             . " (" . implode(", ", $lookup_columns) . ")"
             . " ON UPDATE " . $foreign_key->getOnUpdate()
             . " ON DELETE " . $foreign_key->getOnDelete() . ";";

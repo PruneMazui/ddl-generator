@@ -141,15 +141,19 @@ abstract class AbstractDdlBuilder implements DdlBuilderInterface
      */
     public function buildAllCreateIndex(Definition $definition)
     {
-        if($definition->countIndexes() == 0) {
+        if($definition->countAllIndexes() == 0) {
             return '';
         }
 
         $eol = $this->getConfig('end_of_line');
 
         $sql = '/** CREATE INDEX **/' . $eol;
-        foreach($definition->getIndexes() as $index) {
-            $sql .= $this->buildCreateIndex($index) . $eol;
+        foreach($definition->getSchemas() as $schema) {
+            foreach($schema->getTables() as $table) {
+                foreach($table->getIndexes() as $index){
+                    $sql .= $this->buildCreateIndex($index) . $eol;
+                }
+            }
         }
 
         return $sql . $eol;
@@ -161,7 +165,7 @@ abstract class AbstractDdlBuilder implements DdlBuilderInterface
      */
     public function buildAllCreateForeignKey(Definition $definition)
     {
-        if($definition->countForeignKeys() == 0) {
+        if($definition->countAllForeignKeys() == 0) {
             return '';
         }
 
@@ -169,8 +173,12 @@ abstract class AbstractDdlBuilder implements DdlBuilderInterface
 
         $sql = '/** CREATE FOREIGN KEY **/' . $eol;
 
-        foreach($definition->getForeignKeys() as $foreign_key) {
-            $sql .= $this->buildCreateForeignKey($foreign_key) . $eol;
+        foreach($definition->getSchemas() as $schema) {
+            foreach($schema->getTables() as $table) {
+                foreach($table->getForeignKeys() as $foreign_key){
+                    $sql .= $this->buildCreateForeignKey($foreign_key) . $eol;
+                }
+            }
         }
 
         return $sql . $eol;

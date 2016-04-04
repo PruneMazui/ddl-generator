@@ -34,7 +34,7 @@ class CsvDataSource extends AbstractDataSource
             Feild::COLUMN_DEFAULT        => 10,
         ),
         self::TYPE_INDEX => array(
-            Feild::INDEX_NAME   => 0,
+            Feild::KEY_NAME   => 0,
             Feild::UNIQUE_INDEX => 1,
             Feild::SCHEMA_NAME  => 2,
             Feild::TABLE_NAME   => 3,
@@ -45,9 +45,9 @@ class CsvDataSource extends AbstractDataSource
             Feild::SCHEMA_NAME        => 1,
             Feild::TABLE_NAME         => 2,
             Feild::COLUMN_NAME        => 3,
-            Feild::LOCKUP_SCHEMA_NAME => 4,
-            Feild::LOCKUP_TABLE_NAME  => 5,
-            Feild::LOCKUP_COLUMN_NAME => 6,
+            Feild::LOOKUP_SCHEMA_NAME => 4,
+            Feild::LOOKUP_TABLE_NAME  => 5,
+            Feild::LOOKUP_COLUMN_NAME => 6,
             Feild::ON_UPDATE          => 7,
             Feild::ON_DELETE          => 8,
         )
