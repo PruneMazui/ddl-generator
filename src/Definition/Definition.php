@@ -42,6 +42,78 @@ class Definition
             }
         }
 
+        // unset non column index
+        foreach($this->indexes as $key => $index) {
+            if($index->countColumns() == 0) {
+                // @todo log notice
+                unset($this->indexes[$key]);
+            }
+
+            // check has column
+            if(! $this->hasSchema($index->getSchemaName())) {
+                throw new DdlGeneratorException("Schema is not found for index in Schema `{$index->getSchemaName()}`");
+            }
+            $schema = $this->getSchema($index->getSchemaName());
+
+            if(! $schema->hasTable($index->getTableName())) {
+                throw new DdlGeneratorException("Table is not found for index in Schema `{$index->getSchemaName()}` Table`{$index->getTableName()}`");
+            }
+            $table = $schema->getTable($index->getTableName());
+
+            foreach ($index->getColumnNameList() as $column_name) {
+                if(! $table->hasColumn($column_name)) {
+                    throw new DdlGeneratorException("Column is not found for index in Schema`{$index->getSchemaName()}` Table`{$index->getTableName()}` Column`{$column_name}`");
+                }
+            }
+        }
+
+        // unset non column foreign key
+        foreach($this->foreignKeys as $key => $foreign_key) {
+            if($foreign_key->countColumns() == 0) {
+                // @todo log notice
+                unset($this->foreignKeys[$key]);
+            }
+
+            // check has column
+            if(! $this->hasSchema($foreign_key->getSchemaName())) {
+                throw new DdlGeneratorException("Schema is not found for index in Schema `{$foreign_key->getSchemaName()}`");
+            }
+            $schema = $this->getSchema($foreign_key->getSchemaName());
+
+            if(! $schema->hasTable($foreign_key->getTableName())) {
+                throw new DdlGeneratorException("Table is not found for index in Schema `{$foreign_key->getSchemaName()}` Table`{$index->getTableName()}`");
+            }
+            $table = $schema->getTable($foreign_key->getTableName());
+
+            // lockup
+            if(! $this->hasSchema($foreign_key->getLockupSchemaName())) {
+                throw new DdlGeneratorException("Schema is not found for index in Schema `{$foreign_key->getLockupSchemaName()}`");
+            }
+            $lockup_schema = $this->getSchema($foreign_key->getLockupSchemaName());
+
+            if(! $lockup_schema->hasTable($foreign_key->getLockupTableName())) {
+                throw new DdlGeneratorException("Table is not found for index in Schema `{$foreign_key->getLockupSchemaName()}` Table`{$index->getLockupTableName()}`");
+            }
+            $lockup_table = $lockup_schema->getTable($foreign_key->getTableName());
+
+            $column_name_list = $foreign_key->getColumnNameList();
+            $lockup_column_name_list = $foreign_key->getLockupColumnNameList();
+
+            foreach ($column_name_list as $key => $column_name) {
+                $lockup_column_name = $lockup_column_name_list[$key];
+
+                if(! $table->hasColumn($column_name)) {
+                    throw new DdlGeneratorException("Column is not found for index in Schema`{$foreign_key->getSchemaName()}` Table`{$foreign_key->getTableName()}` Column`{$column_name}`");
+                }
+
+                if(! $lockup_table->hasColumn($lockup_column_name)) {
+                    throw new DdlGeneratorException("Column is not found for index in Schema`{$foreign_key->getLockupSchemaName()}` Table`{$foreign_key->getLockupTableName()}` Column`{$lockup_column_name}`");
+                }
+
+                // @todo log column dataType is not matched
+            }
+        }
+
         return $this;
     }
 
@@ -54,12 +126,44 @@ class Definition
     }
 
     /**
+     * @return number
+     */
+    public function countIndexes()
+    {
+        return count($this->indexes);
+    }
+
+    /**
+     * @return number
+     */
+    public function countForeignKeys()
+    {
+        return count($this->foreignKeys);
+    }
+
+    /**
      * @return \PruneMazui\DdlGenerator\Definition\Rules\Schema[]
      */
     public function getSchemas()
     {
         ksort($this->schemas);
         return $this->schemas;
+    }
+
+    /**
+     * @return \PruneMazui\DdlGenerator\Definition\Rules\Index[]
+     */
+    public function getIndexes()
+    {
+        return $this->indexes;
+    }
+
+    /**
+     * @return \PruneMazui\DdlGenerator\Definition\Rules\ForeignKey[]
+     */
+    public function getForeignKeys()
+    {
+        return $this->foreignKeys;
     }
 
     /**

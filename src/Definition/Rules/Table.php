@@ -77,6 +77,28 @@ class Table
     }
 
     /**
+     * @param string $table_name
+     * @return boolean
+     */
+    public function hasColumn($column_name)
+    {
+        return array_key_exists($column_name, $this->columns);
+    }
+
+    /**
+     * @param string $table_name
+     * @return \PruneMazui\DdlGenerator\Definition\Rules\Table
+     */
+    public function getColumn($column_name)
+    {
+        if($this->hasColumn($column_name)) {
+            return $this->columns[$column_name];
+        }
+
+        return null;
+    }
+
+    /**
      * set primary key
      * @param string | array $primary_key
      * @return \PruneMazui\DdlGenerator\Definition\Rules\Table

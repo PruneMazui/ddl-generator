@@ -95,6 +95,15 @@ class ForeignKey
     }
 
     /**
+     * count column
+     * @return number
+     */
+    public function countColumns()
+    {
+        return count($this->columnNameList);
+    }
+
+    /**
      * @return string
      */
     public function getKeyName()
@@ -148,6 +157,22 @@ class ForeignKey
     public function getLockupColumnNameList()
     {
         return $this->lockupColumnNameList;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOnUpdate()
+    {
+        return $this->onUpdate;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOnDelete()
+    {
+        return $this->onDelete;
     }
 
     /**

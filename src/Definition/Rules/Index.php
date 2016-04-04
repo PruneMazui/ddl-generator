@@ -1,6 +1,8 @@
 <?php
 namespace PruneMazui\DdlGenerator\Definition\Rules;
 
+use PruneMazui\DdlGenerator\DdlGeneratorException;
+
 class Index
 {
     private $indexName;
@@ -37,6 +39,15 @@ class Index
             throw new DdlGeneratorException('Table Name is not allow empty.');
         }
         $this->tableName = $table_name;
+    }
+
+    /**
+     * count column
+     * @return number
+     */
+    public function countColumns()
+    {
+        return count($this->columnNameList);
     }
 
     /**

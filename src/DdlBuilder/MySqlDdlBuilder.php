@@ -5,6 +5,8 @@ use PruneMazui\DdlGenerator\Definition\Definition;
 use PruneMazui\DdlGenerator\DdlGeneratorException;
 use PruneMazui\DdlGenerator\Definition\Rules\Table;
 use PruneMazui\DdlGenerator\Definition\Rules\Schema;
+use PruneMazui\DdlGenerator\Definition\Rules\ForeignKey;
+use PruneMazui\DdlGenerator\Definition\Rules\Index;
 
 /**
  * DDL for MySQL
@@ -70,29 +72,6 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
         }
 
         return parent::buildAll($definition, $add_drop_table);
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \PruneMazui\DdlGenerator\DdlBuilder\DdlBuilderInterface::buildAllCreateTable()
-     */
-    public function buildAllCreateTable(Definition $definition)
-    {
-        if($definition->countSchemas() == 0) {
-            return '';
-        }
-
-        $eol = $this->getConfig('end_of_line');
-
-        $sql = '/** CREATE TABLE **/' . $eol;
-
-        foreach($definition->getSchemas() as $schema) {
-            foreach($schema->getTables() as $table) {
-                $sql .= $this->buildCreateTable($schema, $table) . $eol . $eol;
-            }
-        }
-
-        return $sql;
     }
 
     /**
@@ -218,5 +197,48 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
         }
 
         return implode(',' . $eol, $lines);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \PruneMazui\DdlGenerator\DdlBuilder\DdlBuilderInterface::buildCreateIndex()
+     */
+    public function buildCreateIndex(Index $index)
+    {
+        $sql = "CREATE ";
+        if($index->isUniqueIndex()) {
+            $sql .= "UNIQUE ";
+        }
+
+        // ignore schema
+        $sql .= "INDEX " . $this->quoteIdentifier($index->getIndexName())
+            . " ON " . $this->quoteIdentifier($index->getTableName());
+
+        $columns = array_map(array($this, 'quoteIdentifier'), $index->getColumnNameList());
+
+        $sql .= " (" . implode(", ", $columns) . ");";
+
+        return $sql;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \PruneMazui\DdlGenerator\DdlBuilder\DdlBuilderInterface::buildCreateForeignKey()
+     */
+    public function buildCreateForeignKey(ForeignKey $foreign_key)
+    {
+        $columns = array_map(array($this, 'quoteIdentifier'), $foreign_key->getColumnNameList());
+        $lookup_columns = array_map(array($this, 'quoteIdentifier'), $foreign_key->getLockupColumnNameList());
+
+        // ignore schema
+        $sql = "ALTER TABLE " . $this->quoteIdentifier($foreign_key->getTableName())
+            . " ADD CONSRAINT " . $this->quoteIdentifier($foreign_key->getKeyName())
+            . " FOREIGN KEY (" . implode(", ", $columns) . ")"
+            . " REFERENCES " . $this->quoteIdentifier($foreign_key->getLockupTableName())
+            . " (" . implode(", ", $lookup_columns) . ")"
+            . " ON UPDATE " . $foreign_key->getOnUpdate()
+            . " ON DELETE " . $foreign_key->getOnDelete() . ";";
+
+        return $sql;
     }
 }

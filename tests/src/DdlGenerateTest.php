@@ -29,8 +29,6 @@ class DdlGenerateTest extends \PHPUnit_Framework_TestCase
             'format'   => 'sjis-win',
         ));
 
-        file_put_contents(__DIR__ . '/read.txt', var_export($table_datasource->read(), true));
-
         assertTrue($table_datasource instanceof DataSourceInterface);
         assertTrue($index_datasource instanceof DataSourceInterface);
         assertTrue($foreign_key_datasource instanceof DataSourceInterface);
@@ -45,8 +43,6 @@ class DdlGenerateTest extends \PHPUnit_Framework_TestCase
 
         assertTrue($definition instanceof Definition);
 
-        file_put_contents(__DIR__ . '/debug.txt', var_export($definition, true));
-
         $builder = new MySqlDdlBuilder();
         $content = $builder->buildAll($definition);
 
@@ -55,7 +51,5 @@ class DdlGenerateTest extends \PHPUnit_Framework_TestCase
 
         assertContains('DROP TABLE', $content);
         assertContains('CREATE TABLE', $content);
-
-        file_put_contents(__DIR__ . '/debug.sql', $content);
     }
 }

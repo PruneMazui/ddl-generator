@@ -9,7 +9,9 @@ use PruneMazui\DdlGenerator\Definition\Definition;
  */
 abstract class AbstractDdlBuilder implements DdlBuilderInterface
 {
-    protected static $defaultConfig = array();
+    protected static $defaultConfig = array(
+        'end_of_line'       => "\n",
+    );
 
     protected $config = array();
 
@@ -69,17 +71,108 @@ abstract class AbstractDdlBuilder implements DdlBuilderInterface
      */
     public function buildAll(Definition $definition, $add_drop_table = true)
     {
-        $config = $this->config + self::$defaultConfig;
-
-        // DROP TABLE 構文
+        // DROP TABLE
         $sql = '';
         if($add_drop_table) {
             $sql .= $this->buildAllDropTable($definition);
         }
 
-        // CREATE TABLE 構文
+        // CREATE TABLE
         $sql .= $this->buildAllCreateTable($definition);
 
-        return trim($sql);
+        // INDEX
+        $sql .= $this->buildAllCreateIndex($definition);
+
+        // FOREIGN KEY
+        $sql .= $this->buildAllCreateForeignKey($definition);
+
+        return $sql;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \PruneMazui\DdlGenerator\DdlBuilder\DdlBuilderInterface::buildAllCreateTable()
+     */
+    public function buildAllCreateTable(Definition $definition)
+    {
+        if($definition->countSchemas() == 0) {
+            return '';
+        }
+
+        $eol = $this->getConfig('end_of_line');
+
+        $sql = '/** CREATE TABLE **/' . $eol;
+
+        foreach($definition->getSchemas() as $schema) {
+            foreach($schema->getTables() as $table) {
+                $sql .= $this->buildCreateTable($schema, $table) . $eol . $eol;
+            }
+        }
+
+        return $sql;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \PruneMazui\DdlGenerator\DdlBuilder\DdlBuilderInterface::buildAllDropTable()
+     */
+    public function buildAllDropTable(Definition $definition)
+    {
+        if($definition->countSchemas() == 0) {
+            return '';
+        }
+
+        $eol = $this->getConfig('end_of_line');
+
+        $sql = '/** DROP TABLE **/' . $eol;
+
+        foreach($definition->getSchemas() as $schema) {
+            foreach($schema->getTables() as $table) {
+                $sql .= $this->buildDropTable($schema, $table) . $eol;
+            }
+        }
+
+        return $sql . $eol;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \PruneMazui\DdlGenerator\DdlBuilder\DdlBuilderInterface::buildAllCreateIndex()
+     */
+    public function buildAllCreateIndex(Definition $definition)
+    {
+        if($definition->countIndexes() == 0) {
+            return '';
+        }
+
+        $eol = $this->getConfig('end_of_line');
+
+        $sql = '/** CREATE INDEX **/' . $eol;
+        foreach($definition->getIndexes() as $index) {
+            $sql .= $this->buildCreateIndex($index) . $eol;
+        }
+
+        return $sql . $eol;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \PruneMazui\DdlGenerator\DdlBuilder\DdlBuilderInterface::buildAllCreateForeignKey()
+     */
+    public function buildAllCreateForeignKey(Definition $definition)
+    {
+        if($definition->countForeignKeys() == 0) {
+            return '';
+        }
+
+        $eol = $this->getConfig('end_of_line');
+
+        $sql = '/** CREATE FOREIGN KEY **/' . $eol;
+
+        foreach($definition->getForeignKeys() as $foreign_key) {
+            $sql .= $this->buildCreateForeignKey($foreign_key) . $eol;
+        }
+
+        return $sql . $eol;
     }
 }

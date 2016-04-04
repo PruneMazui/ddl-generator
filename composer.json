@@ -6,10 +6,10 @@
     "license": "MIT",
     "homepage": "https://github.com/PruneMazui/ddl_generator",
     "authors": [
-      {
-        "name": "PruneMazui",
-        "homepage": "https://github.com/PruneMazui"
-      }
+          {
+            "name": "PruneMazui",
+            "homepage": "https://github.com/PruneMazui"
+          }
     ],
     "require" : {
         "php" : "^5.3|^7.0",
@@ -21,13 +21,13 @@
         "phpunit/phpunit": "4.8.*"
     },
     "autoload": {
-      "psr-4": {
-        "PruneMazui\\DdlGenerator\\": "src/"
-      }
+        "psr-4": {
+            "PruneMazui\\DdlGenerator\\": "src/"
+        }
     },
     "autoload-dev": {
-      "psr-4": {
-        "PruneMazui\\DdlGeneratorTest\\": "test/src/"
-      }
+        "psr-4": {
+            "PruneMazui\\DdlGeneratorTest\\": "test/src/"
+        }
     }
 }
