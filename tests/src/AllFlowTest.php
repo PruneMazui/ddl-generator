@@ -7,12 +7,12 @@ use PruneMazui\DdlGenerator\Definition\DefinitionFactory;
 use PruneMazui\DdlGenerator\Definition\Definition;
 use PruneMazui\DdlGenerator\DataSource\CsvDataSource;
 
-class DdlGenerateTest extends AbstractTestCase
+class AllFlowTest extends AbstractTestCase
 {
     /**
      * @test
      */
-    public function flowAllTest()
+    public function allFlowTest()
     {
         $table_datasource = new CsvDataSource(array(
             'filename' => __DIR__ . '/../files/test_table.csv',
@@ -59,5 +59,46 @@ class DdlGenerateTest extends AbstractTestCase
         }
 
         $db = $this->getMySql();
+
+        // drop non table exists
+        $db->getConnection()->exec($builder->buildAllDropTable($definition));
+        assertCount(0, $db->fetchColmun("SHOW TABLES;"));
+
+        // mysql is no schema support
+        $schema = $definition->getSchema("");
+
+        // create table
+        $db->getConnection()->exec($builder->buildAllCreateTable($definition));
+        $tables = $db->fetchColmun("SHOW TABLES;");
+        assertCount($schema->countTables(), $tables);
+
+        // exists all table
+        foreach($schema->getTables() as $table) {
+            assertContains($table->getTableName(), $tables);
+
+            $columns = $db->fetchColmun("SHOW COLUMNS FROM {$table->getTableName()}");
+
+            foreach($table->getColumns() as $column) {
+                assertContains($column->getColumnName(), $columns);
+            }
+        }
+
+        // create index
+        foreach($definition->getIndexes() as $index) {
+            $keys = $db->fetchAll("SHOW KEYS FROM {$index->getTableName()}");
+            assertCount(1, $keys);
+        }
+        $db->getConnection()->exec($builder->buildAllCreateIndex($definition));
+        foreach($definition->getIndexes() as $index) {
+            $keys = $db->fetchAll("SHOW KEYS FROM {$index->getTableName()}");
+            assertGreaterThan(2, $keys);
+        }
+
+        // create foreign keys
+        $db->getConnection()->exec($builder->buildAllCreateForeignKey($definition));
+        foreach($definition->getForeignKeys() as $foreign_key) {
+            $keys = $db->fetchColmun("SHOW KEYS FROM {$foreign_key->getTableName()}");
+            assertGreaterThan(2, $keys);
+        }
     }
 }

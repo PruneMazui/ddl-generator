@@ -25,10 +25,36 @@ class DbWrapper
         $this->pdo = new \PDO($cfg['dsn'], $cfg['username'], $cfg['password'], $cfg['options']);
     }
 
-    public function fetchAll($sql)
+    /**
+     * @return \PDO
+     */
+    public function getConnection()
     {
-        $pdo = $this->pdo;
-        $stmt = $pdo->prepare($sql);
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->pdo;
+    }
+
+    /**
+     * @param string $sql
+     * @param array $bind
+     * @return \PDOStatement
+     */
+    private function stmt($sql, array $bind=array())
+    {
+        $stmt = $this->pdo->prepare((string) $sql);
+        $stmt->execute($bind);
+        return $stmt;
+    }
+
+    /**
+     * @param string $sql
+     */
+    public function fetchAll($sql, array $bind = array())
+    {
+        return $this->stmt($sql, $bind)->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function fetchColmun($sql, array $bind=array())
+    {
+        return $this->stmt($sql, $bind)->fetchAll(\PDO::FETCH_COLUMN);
     }
 }
