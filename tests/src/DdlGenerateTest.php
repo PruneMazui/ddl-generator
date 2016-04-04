@@ -59,6 +59,5 @@ class DdlGenerateTest extends AbstractTestCase
         }
 
         $db = $this->getMySql();
-        $db->exec($content);
     }
 }

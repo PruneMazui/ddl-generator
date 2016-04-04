@@ -4,16 +4,16 @@ namespace PruneMazui\DdlGeneratorTest;
 abstract class AbstractTestCase extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \PDO
+     * @var DbWrapper
      */
     private static $mysql = null;
 
     /**
      * @param \PDO $pdo
      */
-    public static function setMySql(\PDO $pdo)
+    public static function setMySql(DbWrapper $db)
     {
-        self::$mysql = $pdo;
+        self::$mysql = $db;
     }
 
     /**
@@ -25,7 +25,7 @@ abstract class AbstractTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PDO
+     * @return DbWrapper
      */
     protected function getMySql()
     {

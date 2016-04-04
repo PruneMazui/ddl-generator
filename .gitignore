@@ -3,3 +3,4 @@ composer.lock
 composer.phar
 dev
 tests/config/config.php
+report
