@@ -5,11 +5,13 @@ use PruneMazui\DdlGenerator\DdlGeneratorException;
 
 class Index
 {
-    private $table;
-
     private $keyName;
 
     private $isUniqueIndex;
+
+    private $schemaName;
+
+    private $tableName;
 
     private $columnNameList = array();
 
@@ -19,24 +21,24 @@ class Index
      * @param string $schema_name
      * @param string $table_name
      */
-    public function __construct(Table $table, $key_name, $is_unique_index)
+    public function __construct($key_name, $is_unique_index, $schema_name, $table_name)
     {
-        $this->table = $table;
-
         if(! strlen($key_name)) {
-            throw new DdlGeneratorException('Index Name is not allow empty.');
+            throw new DdlGeneratorException('Key Name is not allow empty.');
         }
         $this->keyName = $key_name;
 
         $this->isUniqueIndex = !! $is_unique_index;
-    }
 
-    /**
-     * @return \PruneMazui\DdlGenerator\Definition\Rules\Table
-     */
-    public function getTable()
-    {
-        return $this->table;
+        if(is_null($schema_name)) {
+            $schema_name = '';
+        }
+        $this->schemaName = $schema_name;
+
+        if(! strlen($table_name)) {
+            throw new DdlGeneratorException('Table Name is not allow empty.');
+        }
+        $this->tableName = $table_name;
     }
 
     /**
@@ -65,6 +67,19 @@ class Index
     }
 
     /**
+     * @return string
+     */
+    public function getUniqueName()
+    {
+        $schema_name = $this->schemaName;
+        if(strlen($schema_name)) {
+            $schema_name .= '.';
+        }
+
+        return "{$schema_name}.{$this->tableName}.{$this->keyName}";
+    }
+
+    /**
      * @return bool
      */
     public function isUniqueIndex()
@@ -81,6 +96,22 @@ class Index
     }
 
     /**
+     * @return string
+     */
+    public function getSchemaName()
+    {
+        return $this->schemaName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTableName()
+    {
+        return $this->tableName;
+    }
+
+    /**
      * @return array
      */
     public function getColumnNameList()
@@ -93,6 +124,6 @@ class Index
      */
     public function __toString()
     {
-        return (string) $this->getKeyName();
+        return (string) $this->getIndexName();
     }
 }

@@ -9,7 +9,6 @@ use PruneMazui\DdlGenerator\Definition\Rules\Column;
 use PruneMazui\DdlGenerator\Definition\Rules\Table;
 use PruneMazui\DdlGenerator\Definition\Rules\Schema;
 use PruneMazui\DdlGenerator\DataSource\Feild;
-use PruneMazui\DdlGenerator\DdlGeneratorException;
 
 /**
  * Database Definition Factory
@@ -151,25 +150,15 @@ class DefinitionFactory
         $index = null;
 
         foreach($source->read() as $row) {
-            $key_name = $row->getFeild(Feild::KEY_NAME);
+            $index_name = $row->getFeild(Feild::KEY_NAME);
 
-            if(strlen($key_name)) {
+            if(strlen($index_name)) {
                 $is_unique_index = $row->getFeild(Feild::UNIQUE_INDEX);
-
                 $schema_name = $row->getFeild(Feild::SCHEMA_NAME);
-                $schema = $definition->getSchema($schema_name);
-                if(is_null($schema)) {
-                    throw new DdlGeneratorException("Schema `{$schema_name}` is not found.");
-                }
-
                 $table_name = $row->getFeild(Feild::TABLE_NAME);
-                $table = $schema->getTable($table_name);
-                if(is_null($table)) {
-                    throw new DdlGeneratorException("Table `{$table_name}` in Schema `{$schema_name}` is not found.");
-                }
 
-                $index = new Index($table, $key_name, $is_unique_index);
-                $table->addIndex($index);
+                $index = new Index($index_name, $is_unique_index, $schema_name, $table_name);
+                $definition->addIndex($index);
             }
 
             if(! $index instanceof Index) {
@@ -194,35 +183,16 @@ class DefinitionFactory
 
             if(strlen($key_name)) {
                 $schema_name = $row->getFeild(Feild::SCHEMA_NAME);
-                $schema = $definition->getSchema($schema_name);
-                if(is_null($schema)) {
-                    throw new DdlGeneratorException("Schema `{$schema_name}` is not found.");
-                }
-
                 $table_name = $row->getFeild(Feild::TABLE_NAME);
-                $table = $schema->getTable($table_name);
-                if(is_null($table)) {
-                    throw new DdlGeneratorException("Table `{$table_name}` in Schema `{$schema_name}` is not found.");
-                }
-
-                $lookup_schema_name = $row->getFeild(Feild::LOOKUP_SCHEMA_NAME);
-                $lookup_schema = $definition->getSchema($lookup_schema_name);
-                if(is_null($lookup_schema)) {
-                    throw new DdlGeneratorException("Schema `{$lookup_schema_name}` is not found.");
-                }
-
-                $lookup_table_name = $row->getFeild(Feild::LOOKUP_TABLE_NAME);
-                $lookup_table = $schema->getTable($lookup_table_name);
-                if(is_null($lookup_table)) {
-                    throw new DdlGeneratorException("Table `{$lookup_table_name}` in Schema `{$lookup_schema_name}` is not found.");
-                }
-
+                $lockup_schema_name = $row->getFeild(Feild::LOOKUP_SCHEMA_NAME);
+                $lockup_table_name = $row->getFeild(Feild::LOOKUP_TABLE_NAME);
                 $on_update = $row->getFeild(Feild::ON_UPDATE);
                 $on_delete = $row->getFeild(Feild::ON_DELETE);
 
-                $foreign_key = new ForeignKey($table, $lookup_table, $key_name, $on_update, $on_delete);
+                $foreign_key = new ForeignKey($key_name, $schema_name, $table_name,
+                    $lockup_schema_name, $lockup_table_name, $on_update, $on_delete);
 
-                $table->addForgienKey($foreign_key);
+                $definition->addForgienKey($foreign_key);
             }
 
             if(! $foreign_key instanceof ForeignKey) {
@@ -231,8 +201,8 @@ class DefinitionFactory
 
             $column_name = $row->getFeild(Feild::COLUMN_NAME);
             if(strlen($column_name)) {
-                $lookup_column_name = $row->getFeild(Feild::LOOKUP_COLUMN_NAME);
-                $foreign_key->addColumn($column_name, $lookup_column_name);
+                $lockup_column_name = $row->getFeild(Feild::LOOKUP_COLUMN_NAME);
+                $foreign_key->addColumn($column_name, $lockup_column_name);
             }
         }
 

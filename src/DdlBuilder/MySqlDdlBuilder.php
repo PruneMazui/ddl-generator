@@ -212,7 +212,7 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
 
         // ignore schema
         $sql .= "INDEX " . $this->quoteIdentifier($index->getKeyName())
-            . " ON " . $this->quoteIdentifier($index->getTable()->getTableName());
+            . " ON " . $this->quoteIdentifier($index->getTableName());
 
         $columns = array_map(array($this, 'quoteIdentifier'), $index->getColumnNameList());
 
@@ -231,10 +231,10 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
         $lookup_columns = array_map(array($this, 'quoteIdentifier'), $foreign_key->getLookupColumnNameList());
 
         // ignore schema
-        $sql = "ALTER TABLE " . $this->quoteIdentifier($foreign_key->getTable()->getTableName())
+        $sql = "ALTER TABLE " . $this->quoteIdentifier($foreign_key->getTableName())
             . " ADD CONSTRAINT " . $this->quoteIdentifier($foreign_key->getKeyName())
             . " FOREIGN KEY (" . implode(", ", $columns) . ")"
-            . " REFERENCES " . $this->quoteIdentifier($foreign_key->getLookupTable()->getTableName())
+            . " REFERENCES " . $this->quoteIdentifier($foreign_key->getLookupTableName())
             . " (" . implode(", ", $lookup_columns) . ")"
             . " ON UPDATE " . $foreign_key->getOnUpdate()
             . " ON DELETE " . $foreign_key->getOnDelete() . ";";
