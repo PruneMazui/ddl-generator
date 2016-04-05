@@ -1,3 +1,5 @@
 制約名,スキーマ,テーブル,カラム名,参照先スキーマ,参照先テーブル,参照先カラム名,ON UPDATE,ON DELETE,備考
+,,,,,,,,,
 fk_image_01,,t_image,user_id,,t_user,user_id,CASCADE,CASCADE,
+,,,,,,,,,
 fk_image_data_01,,t_image_data,image_id,,t_image,image_id,CASCADE,CASCADE,

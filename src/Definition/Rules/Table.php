@@ -103,26 +103,16 @@ class Table
      * @param string | array $primary_key
      * @return \PruneMazui\DdlGenerator\Definition\Rules\Table
      */
-    public function setPrimaryKey($primary_key)
+    public function setPrimaryKey($column_name)
     {
-        if(is_string($primary_key)) {
-            $primary_key = array($primary_key);
-        }
+        $this->primary_key = array();
 
-        foreach($primary_key as $column_name) {
-            if (! array_key_exists($column_name, $this->columns)) {
-                throw new DdlGeneratorException("Column '{$column_name}' is not found in {$this->tableName}");
-            }
-        }
-
-        $this->primary_key = $primary_key;
-
-        return $this;
+        return $this->addPrimaryKey($column_name);
     }
 
     /**
      * add primary key
-     * @param string $column_name
+     * @param string | array $column_name
      * @throws DdlGeneratorException
      * @return \PruneMazui\DdlGenerator\Definition\Rules\Table
      */

@@ -1,3 +1,5 @@
 インデックス名,一意,スキーマ,テーブル名,カラム名,備考
+,,,,,
 idx_user_01,U,,t_user,client_id,
+,,,,,
 idx_image_01,U,,t_image,access_key,

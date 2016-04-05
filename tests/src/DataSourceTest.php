@@ -120,5 +120,10 @@ class ExcelDataSourceTest extends AbstractTestCase
         assertTrue($definition instanceof Definition);
         assertTrue($definition->hasTable("", "t_user"));
         assertTrue($definition->hasTable("", "t_test"));
+
+        // count
+        assertEquals($definition->countAllTables(), 4);
+        assertEquals($definition->countAllColumns(), 18);
+        assertEquals($definition->countSchemas(), 1);
     }
 }

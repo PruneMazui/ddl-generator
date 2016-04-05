@@ -2,59 +2,19 @@
 namespace PruneMazui\DdlGenerator\DdlBuilder;
 
 use PruneMazui\DdlGenerator\Definition\Definition;
+use PruneMazui\DdlGenerator\AbstractDdlGenerator;
 
 /**
  * Abstract Class DDL builder
  * @author ko_tanaka
  */
-abstract class AbstractDdlBuilder implements DdlBuilderInterface
+abstract class AbstractDdlBuilder extends AbstractDdlGenerator implements DdlBuilderInterface
 {
     protected static $defaultConfig = array(
         'end_of_line'       => "\n",
     );
 
     protected $config = array();
-
-    /**
-     * @param array optional $config
-     */
-    public function __construct(array $config = null)
-    {
-        if(! is_null($config)) {
-            $this->setConfig($config);
-        }
-    }
-
-    /**
-     * Set Config
-     * @param array $config
-     * @return \PruneMazui\DdlGenerator\DdlBuilder\AbstractDdlBuilder
-     */
-    public function setConfig(array $config)
-    {
-        $this->config = $config;
-        return $this;
-    }
-
-    /**
-     * Get Config
-     * @param config $key
-     * @return mixed
-     */
-    public function getConfig($key = null)
-    {
-        $config = $this->config + static::$defaultConfig;
-
-        if(is_null($key)) {
-            return $config;
-        }
-
-        if(isset($config[$key])) {
-            return $config[$key];
-        }
-
-        return null;
-    }
 
     /**
      * Quote String

@@ -65,13 +65,24 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
      */
     public function buildAll(Definition $definition, $add_drop_table = true)
     {
-        $schemas = $definition->getSchemas();
-
-        if(count($schemas) > 1) {
+        if($definition->countSchemas() > 1) {
             throw new DdlGeneratorException('There are no schema in MySQL. Schema count is grater than 1.');
         }
 
         return parent::buildAll($definition, $add_drop_table);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \PruneMazui\DdlGenerator\DdlBuilder\AbstractDdlBuilder::buildAllCreateTable()
+     */
+    public function buildAllCreateTable(Definition $definition)
+    {
+        if($definition->countSchemas() > 1) {
+            throw new DdlGeneratorException('There are no schema in MySQL. Schema count is grater than 1.');
+        }
+
+        return parent::buildAllCreateTable($definition);
     }
 
     /**
@@ -115,6 +126,10 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
     {
         if($definition->countSchemas() == 0) {
             return '';
+        }
+
+        if($definition->countSchemas() > 1) {
+            throw new DdlGeneratorException('There are no schema in MySQL. Schema count is grater than 1.');
         }
 
         $eol = $this->getConfig('end_of_line');
@@ -201,6 +216,19 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
 
     /**
      * {@inheritDoc}
+     * @see \PruneMazui\DdlGenerator\DdlBuilder\AbstractDdlBuilder::buildAllCreateIndex()
+     */
+    public function buildAllCreateIndex(Definition $definition)
+    {
+        if($definition->countSchemas() > 1) {
+            throw new DdlGeneratorException('There are no schema in MySQL. Schema count is grater than 1.');
+        }
+
+        return parent::buildAllCreateIndex($definition);
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \PruneMazui\DdlGenerator\DdlBuilder\DdlBuilderInterface::buildCreateIndex()
      */
     public function buildCreateIndex(Index $index)
@@ -219,6 +247,19 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
         $sql .= " (" . implode(", ", $columns) . ");";
 
         return $sql;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \PruneMazui\DdlGenerator\DdlBuilder\AbstractDdlBuilder::buildAllCreateForeignKey()
+     */
+    public function buildAllCreateForeignKey(Definition $definition)
+    {
+        if($definition->countSchemas() > 1) {
+            throw new DdlGeneratorException('There are no schema in MySQL. Schema count is grater than 1.');
+        }
+
+        return parent::buildAllCreateForeignKey($definition);
     }
 
     /**
