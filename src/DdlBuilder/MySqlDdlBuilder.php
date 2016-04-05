@@ -22,6 +22,13 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
         'format'            => "UTF-8",
     );
 
+    protected static $numericTypeMap = array(
+        'INT', // INTEGER INT SMALLINT TINYINT MEDIUMINT BIGINT
+        'DEC', 'FIXED', 'NUMERIC', 'FIXED', // DECIMAL alias
+        'BIT', 'BOOL', // TINYINT(1)
+        'FLOAT', 'DOUBLE', 'REAL',
+    );
+
     /**
      *
      * @param string $data_type
@@ -29,16 +36,9 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
      */
     public function isNumericType($data_type)
     {
-        static $map = array(
-            'INT', // INTEGER INT SMALLINT TINYINT MEDIUMINT BIGINT
-            'DEC', 'FIXED', 'NUMERIC', 'FIXED', // DECIMAL alias
-            'BIT', 'BOOL', // TINYINT(1)
-            'FLOAT', 'DOUBLE', 'REAL',
-        );
-
         $data_type = strtoupper($data_type);
 
-        foreach($map as $word) {
+        foreach(self::$numericTypeMap as $word) {
             if(strpos($data_type, $word) !== false) {
                 return true;
             }

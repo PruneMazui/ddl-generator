@@ -114,29 +114,6 @@ abstract class AbstractDdlBuilder implements DdlBuilderInterface
 
     /**
      * {@inheritDoc}
-     * @see \PruneMazui\DdlGenerator\DdlBuilder\DdlBuilderInterface::buildAllDropTable()
-     */
-    public function buildAllDropTable(Definition $definition)
-    {
-        if($definition->countSchemas() == 0) {
-            return '';
-        }
-
-        $eol = $this->getConfig('end_of_line');
-
-        $sql = '/** DROP TABLE **/' . $eol;
-
-        foreach($definition->getSchemas() as $schema) {
-            foreach($schema->getTables() as $table) {
-                $sql .= $this->buildDropTable($schema, $table) . $eol;
-            }
-        }
-
-        return $sql . $eol;
-    }
-
-    /**
-     * {@inheritDoc}
      * @see \PruneMazui\DdlGenerator\DdlBuilder\DdlBuilderInterface::buildAllCreateIndex()
      */
     public function buildAllCreateIndex(Definition $definition)

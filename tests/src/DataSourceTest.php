@@ -1,13 +1,13 @@
 <?php
-namespace PruneMazui\DdlGeneratorTest\DataSource;
+namespace PruneMazui\DdlGeneratorTest;
 
-use PruneMazui\DdlGeneratorTest\AbstractTestCase;
 use PruneMazui\DdlGenerator\DataSource\ExcelDataSource;
 use \PruneMazui\DdlGenerator\DdlGeneratorException;
 use PruneMazui\DdlGenerator\Definition\DefinitionFactory;
 use PruneMazui\DdlGenerator\Definition\Definition;
 use PruneMazui\DdlGenerator\DataSource\RowData;
 use PruneMazui\DdlGenerator\DataSource\Feild;
+use PruneMazui\DdlGenerator\DataSource\CsvDataSource;
 
 class ExcelDataSourceTest extends AbstractTestCase
 {
@@ -39,6 +39,37 @@ class ExcelDataSourceTest extends AbstractTestCase
         try {
             $table_datasource = new ExcelDataSource();
             $table_datasource->setDataSourceType('hoge');
+
+            $this->fail();
+        } catch (DdlGeneratorException $ex) {
+            $this->addToAssertionCount(1);
+        }
+
+        try {
+            $table_datasource = new CsvDataSource();
+            $table_datasource->read();
+
+            $this->fail();
+        } catch (DdlGeneratorException $ex) {
+            $this->addToAssertionCount(1);
+        }
+
+        try {
+            $table_datasource = new CsvDataSource(array(
+                'filename' => __DIR__ . '/files',
+            ));
+            $table_datasource->read();
+
+            $this->fail();
+        } catch (DdlGeneratorException $ex) {
+            $this->addToAssertionCount(1);
+        }
+
+        try {
+            $table_datasource = new CsvDataSource(array(
+                'filename' => __DIR__ . '/files/nofile',
+            ));
+            $table_datasource->read();
 
             $this->fail();
         } catch (DdlGeneratorException $ex) {

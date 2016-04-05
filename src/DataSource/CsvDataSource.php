@@ -61,7 +61,7 @@ class CsvDataSource extends AbstractDataSource
         $format = $this->getConfig('format');
 
         if(!strlen($format) || $format == 'UTF-8') {
-            return fopen($filename, 'r');
+            return @fopen($filename, 'r');
         }
 
         $content = file_get_contents($filename);
