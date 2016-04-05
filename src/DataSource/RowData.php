@@ -1,6 +1,8 @@
 <?php
 namespace PruneMazui\DdlGenerator\DataSource;
 
+use PruneMazui\DdlGenerator\DdlGeneratorException;
+
 /**
  * DataSource Readed Data Container
  * @author tanaka
@@ -41,7 +43,7 @@ class RowData implements \ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return $this->getFeild($feild);
+        return $this->getFeild($offset);
     }
 
     /**
@@ -52,7 +54,7 @@ class RowData implements \ArrayAccess
      */
     public function offsetSet($offset, $value)
     {
-        throw new \DdlGeneratorException('This class is readonly.');
+        throw new DdlGeneratorException('This class is readonly.');
     }
 
     /**
@@ -63,7 +65,7 @@ class RowData implements \ArrayAccess
      */
     public function offsetUnset($offset)
     {
-        throw new \DdlGeneratorException('This class is readonly.');
+        throw new DdlGeneratorException('This class is readonly.');
     }
 
     /**

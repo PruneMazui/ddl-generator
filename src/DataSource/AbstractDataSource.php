@@ -51,10 +51,6 @@ abstract class AbstractDataSource extends AbstractDdlGenerator implements DataSo
             $key_map = static::$defaultKeyMap[$this->datasource_type];
         }
 
-        if(empty($key_map)) {
-            throw new DdlGeneratorException('key mapping is not defined.');
-        }
-
         return $key_map;
     }
 }

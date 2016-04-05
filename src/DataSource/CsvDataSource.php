@@ -90,6 +90,10 @@ class CsvDataSource extends AbstractDataSource
         }
 
         $fp = $this->fopenEncoding($filename);
+        if($fp === false) {
+            throw new DdlGeneratorException("faild to file open.");
+        }
+
         $skip_line = $this->getConfig('skip_first_line');
 
         $ret = array();
@@ -110,6 +114,8 @@ class CsvDataSource extends AbstractDataSource
             }
             $line_count++;
         }
+
+        fclose($fp);
 
         return $ret;
     }

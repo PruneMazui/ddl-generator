@@ -15,17 +15,17 @@ class AllFlowTest extends AbstractTestCase
     public function allFlowTest()
     {
         $table_datasource = new CsvDataSource(array(
-            'filename' => __DIR__ . '/../files/test_table.csv',
+            'filename' => __DIR__ . '/files/test_table.csv',
             'format'   => 'sjis-win',
         ));
 
         $index_datasource = new CsvDataSource(array(
-            'filename' => __DIR__ . '/../files/test_index.csv',
+            'filename' => __DIR__ . '/files/test_index.csv',
             'format'   => 'sjis-win',
         ));
 
         $foreign_key_datasource = new CsvDataSource(array(
-            'filename' => __DIR__ . '/../files/test_foreign_key.csv',
+            'filename' => __DIR__ . '/files/test_foreign_key.csv',
             'format'   => 'sjis-win',
         ));
 
