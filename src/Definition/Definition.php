@@ -292,11 +292,11 @@ class Definition
     {
         $key_name = $index->getUniqueName();
         if(array_key_exists($key_name, $this->indexes)) {
-            throw new DdlGeneratorException("Index Key '{$key_name}' is already exist in `{$this->getTableName()}`");
+            throw new DdlGeneratorException("Index Key '{$key_name}' is already exist");
         }
 
         if(array_key_exists($key_name, $this->foreignKeys)) {
-            throw new DdlGeneratorException("Foreign Key '{$key_name}' is already exist in `{$this->getTableName()}`");
+            throw new DdlGeneratorException("Foreign Key '{$key_name}' is already exist");
         }
 
         $this->indexes[$key_name] = $index;
@@ -313,11 +313,11 @@ class Definition
     {
         $key_name = $foreign_key->getUniqueName();
         if(array_key_exists($key_name, $this->indexes)) {
-            throw new DdlGeneratorException("Index Key '{$key_name}' is already exist in `{$this->getTableName()}`");
+            throw new DdlGeneratorException("Index Key '{$key_name}' is already exist");
         }
 
         if(array_key_exists($key_name, $this->foreignKeys)) {
-            throw new DdlGeneratorException("Foreign Key '{$key_name}' is already exist in `{$this->getTableName()}`");
+            throw new DdlGeneratorException("Foreign Key '{$key_name}' is already exist");
         }
 
         $this->foreignKeys[$key_name] = $foreign_key;
