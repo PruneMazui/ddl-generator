@@ -69,7 +69,7 @@ class Definition
             $lookup_column_list = $foreign_key->getLookupColumnNameList();
 
             if(count($column_list) !== count($lookup_column_list)) {
-                throw new DdlGeneratorException("Column count and lookup column count is not match.");
+                throw new DdlGeneratorException("Column count and lookup column count is not match."); // @codeCoverageIgnore
             }
 
             foreach($column_list as $idx => $column_name) {
@@ -86,9 +86,9 @@ class Definition
                     throw new DdlGeneratorException("Lookup Column `{$lookup_column_name}` is not found for foreign key.");
                 }
 
-                if($column->getDataType() != $lookup_column->getDataType()) {
-                    // @todo notice foreign key column's data type is not equals.
-                }
+//                 if($column->getDataType() != $lookup_column->getDataType()) {
+//                     // @todo notice foreign key column's data type is not equals.
+//                 }
             }
         }
 

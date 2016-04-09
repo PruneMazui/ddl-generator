@@ -124,6 +124,6 @@ class Index
      */
     public function __toString()
     {
-        return (string) $this->getIndexName();
+        return (string) $this->getKeyName();
     }
 }

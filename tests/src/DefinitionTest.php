@@ -165,4 +165,61 @@ class DefinitionTest extends AbstractTestCase
         assertNull($definition->getColumn("", "piyo", "fuga"));
     }
 
+    /**
+     * @test
+     */
+    public function finalizeError()
+    {
+        $definition = new Definition();
+
+        $column = new Column("exist_column", "INT");
+
+        $table = new Table("table");
+        $table->addColumn($column);
+
+        $schema = new Schema("schema");
+        $schema->addTable($table);
+        $definition->addSchema($schema);
+
+        // not exist column index
+        $def = clone $definition;
+        $index = new Index("key_name", true, "schema", "table");
+        $index->addColumn("not_exist_column");
+        $def->addIndex($index);
+        try {
+            $def->finalize();
+            $this->fail();
+        } catch (DdlGeneratorException $ex) {
+            $this->addToAssertionCount(1);
+        }
+
+        // not exist column foreign key
+
+        $foreign_key = new ForeignKey("key_name", "schema", "table", "schema", "table", "CASCADE", "CASACADE");
+
+        $def = clone $definition;
+        $fkey = clone $foreign_key;
+
+        $fkey->addColumn("exist_column", "not_exist_column");
+        $def->addForgienKey($fkey);
+        try {
+            $def->finalize();
+            $this->fail();
+        } catch (DdlGeneratorException $ex) {
+            $this->addToAssertionCount(1);
+        }
+
+        $def = clone $definition;
+        $fkey = clone $foreign_key;
+
+        $fkey->addColumn("not_exist_column", "exist_column");
+        $def->addForgienKey($fkey);
+        try {
+            $def->finalize();
+            $this->fail();
+        } catch (DdlGeneratorException $ex) {
+            $this->addToAssertionCount(1);
+        }
+    }
+
 }
