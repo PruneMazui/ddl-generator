@@ -114,8 +114,7 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
         }
         $sql .= ';';
 
-        // @todo convert encoding
-        return $sql;
+        return $this->encode($sql);
     }
 
     /**
@@ -160,8 +159,7 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
      */
     public function buildDropTable(Schema $schema, Table $table)
     {
-        // @todo convert encoding
-        return 'DROP TABLE IF EXISTS ' . $this->quoteIdentifier($table->getTableName()) . ';';
+        return $this->encode('DROP TABLE IF EXISTS ' . $this->quoteIdentifier($table->getTableName()) . ';');
     }
 
     private function buildTableColumns(Table $table)
@@ -246,7 +244,7 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
 
         $sql .= " (" . implode(", ", $columns) . ");";
 
-        return $sql;
+        return $this->encode($sql);
     }
 
     /**
@@ -280,6 +278,6 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
             . " ON UPDATE " . $foreign_key->getOnUpdate()
             . " ON DELETE " . $foreign_key->getOnDelete() . ";";
 
-        return $sql;
+        return $this->encode($sql);
     }
 }

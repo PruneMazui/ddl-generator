@@ -54,6 +54,13 @@ class AllFlowTest extends AbstractTestCase
         assertContains('CREATE INDEX', $content);
         assertContains('ALTER TABLE', $content);
 
+        // encode
+        $builder->setConfig(array(
+            'format' => 'SJIS-win',
+        ));
+        $content_sjis = $builder->buildAll($definition);
+        assertEquals($content, mb_convert_encoding($content_sjis, 'UTF-8', 'SJIS-win'));
+
         if(! $this->hasMySql()) {
             $this->markTestSkipped('MySQL Connection is not defined');
         }
@@ -61,6 +68,7 @@ class AllFlowTest extends AbstractTestCase
         $db = $this->getMySql();
 
         // drop non table exists
+        $builder->setConfig(array());
         $db->getConnection()->exec($builder->buildAllDropTable($definition));
         assertCount(0, $db->fetchColmun("SHOW TABLES;"));
 

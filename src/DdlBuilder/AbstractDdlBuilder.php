@@ -12,6 +12,7 @@ abstract class AbstractDdlBuilder extends AbstractDdlGenerator implements DdlBui
 {
     protected static $defaultConfig = array(
         'end_of_line'       => "\n",
+        'format'            => "UTF-8",
     );
 
     protected $config = array();
@@ -23,6 +24,17 @@ abstract class AbstractDdlBuilder extends AbstractDdlGenerator implements DdlBui
     protected function quoteString($str)
     {
         return "'" . addcslashes($str, "\000\n\r\\'\"\032") . "'";
+    }
+
+    protected function encode($str)
+    {
+        $encode = $this->getConfig('format');
+
+        if(! strlen($encode) || strtoupper($encode) == 'UTF-8') {
+            return $str;
+        }
+
+        return mb_convert_encoding($str, $encode);
     }
 
     /**

@@ -7,7 +7,6 @@ namespace PruneMazui\DdlGenerator\DataSource;
  */
 class Feild
 {
-    // @todo index comment supported by mysql >= 5.5
     const SCHEMA_NAME = 'schema_name';
     const TABLE_NAME = 'table_name';
     const TABLE_COMMENT = 'table_comment';
