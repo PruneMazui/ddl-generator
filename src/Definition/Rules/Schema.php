@@ -2,6 +2,7 @@
 namespace PruneMazui\DdlGenerator\Definition\Rules;
 
 use PruneMazui\DdlGenerator\DdlGeneratorException;
+use Psr\Log\LoggerInterface;
 
 class Schema
 {
@@ -25,13 +26,15 @@ class Schema
 
     /**
      * unset non column table
+     *
+     * @param LoggerInterface $logger
      * @return \PruneMazui\DdlGenerator\Definition\Rules\Schema
      */
-    public function filter()
+    public function filter(LoggerInterface $logger)
     {
         foreach($this->tables as $key => $table) {
             if($table->countColumns() == 0) {
-                // @todo logging
+                $logger->notice("Table `{$table->getTableName()}` has not column. unset this table.");
                 unset($this->tables[$key]);
             }
         }

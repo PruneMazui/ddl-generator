@@ -1,6 +1,8 @@
 <?php
 namespace PruneMazui\DdlGeneratorTest;
 
+use Psr\Log\NullLogger;
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $reflection = new \ReflectionClass('PHPUnit_Framework_Assert');
@@ -56,5 +58,31 @@ class DbWrapper
     public function fetchColmun($sql, array $bind=array())
     {
         return $this->stmt($sql, $bind)->fetchAll(\PDO::FETCH_COLUMN);
+    }
+}
+
+class TestLogger extends NullLogger
+{
+    private $messages = array();
+
+    public function countMessages()
+    {
+        return count($this->messages);
+    }
+
+    public function hasMessages()
+    {
+        return !! count($this->messages);
+    }
+
+    public function resetMessages()
+    {
+        $this->messages = array();
+        return $this;
+    }
+
+    public function log($level, $message, array $context = array())
+    {
+        $this->messages[] = $message;
     }
 }

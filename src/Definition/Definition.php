@@ -6,6 +6,8 @@ use PruneMazui\DdlGenerator\Definition\Rules\Schema;
 use PruneMazui\DdlGenerator\Definition\Rules\ForeignKey;
 use PruneMazui\DdlGenerator\Definition\Rules\Index;
 use PruneMazui\DdlGenerator\Definition\Rules\Table;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 /**
  * database definition
  *
@@ -30,14 +32,21 @@ class Definition
 
     /**
      * execute filtering and checking to all tables
+     *
+     * @param LoggerInterface optional $logger
      * @return \PruneMazui\DdlGenerator\Definition\Rules\Schema
      */
-    public function finalize()
+    public function finalize(LoggerInterface $logger = null)
     {
+        if(is_null($logger)) {
+            $logger = new NullLogger();
+        }
+
         // unset non table schema
         foreach($this->schemas as $key => $schema) {
-            $schema->filter();
+            $schema->filter($logger);
             if($schema->countTables() == 0) {
+                $logger->notice("Schema `{$schema->getSchemaName()}` has not column. unset this Schema.");
                 unset($this->schemas[$key]);
             }
         }
@@ -45,7 +54,7 @@ class Definition
         // unset non column index
         foreach($this->indexes as $key => $index) {
             if($index->countColumns() == 0) {
-                // @todo logging
+                $logger->notice("Index `{$index->getUniqueName()}` has no column. unset this index.");
                 unset($this->indexes[$key]);
                 continue;
             }
@@ -60,7 +69,7 @@ class Definition
         // unset non column foreign key
         foreach($this->foreignKeys as $key => $foreign_key) {
             if($foreign_key->countColumns() == 0) {
-                // @todo logging
+                $logger->notice("Foreign Key `{$foreign_key->getUniqueName()}` has no column. unset this foreign key.");
                 unset($this->foreignKeys[$key]);
                 continue;
             }
@@ -86,9 +95,9 @@ class Definition
                     throw new DdlGeneratorException("Lookup Column `{$lookup_column_name}` is not found for foreign key.");
                 }
 
-//                 if($column->getDataType() != $lookup_column->getDataType()) {
-//                     // @todo notice foreign key column's data type is not equals.
-//                 }
+                if($column->getDataType() != $lookup_column->getDataType()) {
+                    $logger->notice("Foreign Key `{$foreign_key->getUniqueName()}` column data type is not equal to lockup column data type.");
+                }
             }
         }
 

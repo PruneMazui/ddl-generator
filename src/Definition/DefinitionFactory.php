@@ -9,6 +9,7 @@ use PruneMazui\DdlGenerator\Definition\Rules\Column;
 use PruneMazui\DdlGenerator\Definition\Rules\Table;
 use PruneMazui\DdlGenerator\Definition\Rules\Schema;
 use PruneMazui\DdlGenerator\DataSource\Feild;
+use Psr\Log\LoggerInterface;
 
 /**
  * Database Definition Factory
@@ -66,13 +67,11 @@ class DefinitionFactory
     }
 
     /**
+     * @param LoggerInterface optional $logger
      * @return \PruneMazui\DdlGenerator\Definition\Definition
      */
-    public function create()
+    public function create(LoggerInterface $logger = null)
     {
-
-        // @todo logger interface
-
         $definition = new Definition();
 
         // table
@@ -88,7 +87,7 @@ class DefinitionFactory
             $definition = $this->loadForeignKeySource($source, $definition);
         }
 
-        return $definition->finalize();
+        return $definition->finalize($logger);
     }
 
     /**

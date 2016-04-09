@@ -11,6 +11,14 @@ use PruneMazui\DdlGenerator\Definition\Rules\Column;
 
 class DefinitionTest extends AbstractTestCase
 {
+    private $logger;
+
+    protected function setUp()
+    {
+        $this->logger = new TestLogger();
+        return parent::setUp();
+    }
+
     /**
      * @test
      */
@@ -19,32 +27,60 @@ class DefinitionTest extends AbstractTestCase
         $definition = new Definition();
 
         // non column Table unset
+        $this->logger->resetMessages();
         $table = new Table("hoge");
         $schema = new Schema(null);
         $schema->addTable($table);
         $definition->addSchema($schema);
 
+        assertEquals(0, $this->logger->countMessages());
         assertEquals(1, $definition->countSchemas());
         assertEquals(1, $definition->countAllTables());
-        $definition->finalize();
+        $definition->finalize($this->logger);
+        assertEquals(2, $this->logger->countMessages());
         assertEquals(0, $definition->countSchemas());
         assertEquals(0, $definition->countAllTables());
 
         // non column Index unset
+        $this->logger->resetMessages();
         $index = new Index("fuga", false, "", "hoge");
         $definition->addIndex($index);
 
+        assertEquals(0, $this->logger->countMessages());
         assertEquals(1, $definition->countIndexes());
-        $definition->finalize();
+        $definition->finalize($this->logger);
+        assertEquals(1, $this->logger->countMessages());
         assertEquals(0, $definition->countIndexes());
 
         // non column Foreign Key unset
+        $this->logger->resetMessages();
         $foreign_key = new ForeignKey("piyo", "", "hoge", "", "hoge2", "CASCADE", "CASACADE");
         $definition->addForgienKey($foreign_key);
 
+        assertEquals(0, $this->logger->countMessages());
         assertEquals(1, $definition->countForeignKeys());
-        $definition->finalize();
+        $definition->finalize($this->logger);
+        assertEquals(1, $this->logger->countMessages());
         assertEquals(0, $definition->countForeignKeys());
+
+        // foreign key data type is not equals
+        $this->logger->resetMessages();
+        $table = new Table("hoge");
+        $table->addColumn(new Column("column1", "INT"));
+        $table->addColumn(new Column("column2", "TEXT"));
+        $schema = new Schema(null);
+        $schema->addTable($table);
+        $definition->addSchema($schema);
+
+        $foreign_key = new ForeignKey("key_name", "", "hoge", "", "hoge", "CASCADE", "CASCADE");
+        $foreign_key->addColumn("column1", "column2");
+        $definition->addForgienKey($foreign_key);
+
+        assertEquals(0, $this->logger->countMessages());
+        assertEquals(2, $definition->countAllColumns());
+        $definition->finalize($this->logger);
+        assertEquals(1, $this->logger->countMessages());
+        assertEquals(2, $definition->countAllColumns());
     }
 
     /**
