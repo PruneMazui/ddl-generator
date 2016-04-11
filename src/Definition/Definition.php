@@ -64,7 +64,10 @@ class Definition
 
             foreach ($index->getColumnNameList() as $column_name) {
                 if(! $this->hasColumn($index->getSchemaName(), $index->getTableName(), $column_name)) {
-                    throw new DdlGeneratorException("Column `{$column_name}` is not found for index.");
+                    $name = $index->getSchemaName();
+                    $name .= strlen($name) ? '.' : '';
+                    $name .= $index->getTableName(). '.' . $column_name;
+                    throw new DdlGeneratorException("Column `{$name}` is not found for index.");
                 }
             }
         }
@@ -91,11 +94,17 @@ class Definition
                 $lookup_column = $this->getColumn($foreign_key->getLookupSchemaName(), $foreign_key->getLookupTableName(), $lookup_column_name);
 
                 if(is_null($column)) {
-                    throw new DdlGeneratorException("Column `{$column_name}` is not found for foreign key.");
+                    $name = $foreign_key->getSchemaName();
+                    $name .= strlen($name) ? '.' : '';
+                    $name .= $foreign_key->getTableName(). '.' . $column_name;
+                    throw new DdlGeneratorException("Column `{$name}` is not found for foreign key.");
                 }
 
                 if(is_null($lookup_column)) {
-                    throw new DdlGeneratorException("Lookup Column `{$lookup_column_name}` is not found for foreign key.");
+                    $name = $foreign_key->getLookupSchemaName();
+                    $name .= strlen($name) ? '.' : '';
+                    $name .= $foreign_key->getLookupTableName() . "." .  $lookup_column_name;
+                    throw new DdlGeneratorException("Lookup Column `{$name}` is not found for foreign key.");
                 }
 
                 if($column->getDataType() != $lookup_column->getDataType()) {
