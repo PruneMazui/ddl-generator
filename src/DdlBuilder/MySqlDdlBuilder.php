@@ -187,6 +187,7 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
             }
 
             $default = $column->getDefault();
+
             if(strlen($default)) {
                 if($this->isNumericType($data_type)) {
                     $sql .= 'DEFAULT ' . $default . " ";

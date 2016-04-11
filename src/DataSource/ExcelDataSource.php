@@ -92,10 +92,10 @@ class ExcelDataSource extends AbstractDataSource
 
                 $row_data = array();
                 foreach ($row->getCellIterator() as $col_number => $cell) {
-                    $row_data[$col_number] = $cell->getValue();
+                    $row_data[$col_number] = (string) $cell->getValue();
                 }
 
-                $row_data = array_filter($row_data);
+                $row_data = array_filter($row_data, 'strlen');
 
                 if(count($row_data)) {
                     $ret[] = new RowData($row_data, $key_map);

@@ -9,7 +9,6 @@ use PruneMazui\DdlGenerator\DdlGeneratorException;
  */
 class RowData implements \ArrayAccess
 {
-
     private $row;
 
     private $keyMap;
