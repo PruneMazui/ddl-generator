@@ -3,7 +3,7 @@ namespace PruneMazui\DdlGenerator\Definition\Rules;
 
 use PruneMazui\DdlGenerator\DdlGeneratorException;
 
-class Table
+class Table extends AbstractRules
 {
     /**
      * @var string
@@ -23,7 +23,7 @@ class Table
     /**
      * @var array
      */
-    private $primary_key = array();
+    private $primaryKey = array();
 
     /**
      * @return number
@@ -105,7 +105,7 @@ class Table
      */
     public function setPrimaryKey($column_name)
     {
-        $this->primary_key = array();
+        $this->primaryKey = array();
 
         return $this->addPrimaryKey($column_name);
     }
@@ -118,6 +118,10 @@ class Table
      */
     public function addPrimaryKey($column_name)
     {
+        if($this->isLocked) {
+            throw new DdlGeneratorException('This object is already immutable.');
+        }
+
         if(is_string($column_name)) {
             $column_name = array($column_name);
         }
@@ -127,7 +131,7 @@ class Table
                 throw new DdlGeneratorException("Column '{$column}' is not found in {$this->tableName}");
             }
 
-            $this->primary_key[] = $column;
+            $this->primaryKey[] = $column;
         }
 
         return $this;
@@ -135,7 +139,7 @@ class Table
 
     public function getPrimaryKey()
     {
-        return $this->primary_key;
+        return $this->primaryKey;
     }
 
     /**
@@ -146,6 +150,10 @@ class Table
      */
     public function addColumn(Column $column)
     {
+        if($this->isLocked) {
+            throw new DdlGeneratorException('This object is already immutable.');
+        }
+
         $column_name = $column->getColumnName();
         if(array_key_exists($column_name, $this->columns)) {
             throw new DdlGeneratorException("Column '{$column_name}' is already exist in {$this->tableName}");
@@ -161,5 +169,18 @@ class Table
     public function __toString()
     {
         return (string) $this->getTableName();
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \PruneMazui\DdlGenerator\Definition\Rules\AbstractRules::lock()
+     */
+    public function lock()
+    {
+        foreach($this->columns as $column) {
+            $column->lock();
+        }
+
+        return parent::lock();
     }
 }

@@ -36,7 +36,7 @@ class DefinitionTest extends AbstractTestCase
         assertEquals(0, $this->logger->countMessages());
         assertEquals(1, $definition->countSchemas());
         assertEquals(1, $definition->countAllTables());
-        $definition->finalize($this->logger);
+        $definition->finalize($this->logger, false);
         assertEquals(2, $this->logger->countMessages());
         assertEquals(0, $definition->countSchemas());
         assertEquals(0, $definition->countAllTables());
@@ -48,7 +48,7 @@ class DefinitionTest extends AbstractTestCase
 
         assertEquals(0, $this->logger->countMessages());
         assertEquals(1, $definition->countIndexes());
-        $definition->finalize($this->logger);
+        $definition->finalize($this->logger, false);
         assertEquals(1, $this->logger->countMessages());
         assertEquals(0, $definition->countIndexes());
 
@@ -59,7 +59,7 @@ class DefinitionTest extends AbstractTestCase
 
         assertEquals(0, $this->logger->countMessages());
         assertEquals(1, $definition->countForeignKeys());
-        $definition->finalize($this->logger);
+        $definition->finalize($this->logger, false);
         assertEquals(1, $this->logger->countMessages());
         assertEquals(0, $definition->countForeignKeys());
 
@@ -78,7 +78,7 @@ class DefinitionTest extends AbstractTestCase
 
         assertEquals(0, $this->logger->countMessages());
         assertEquals(2, $definition->countAllColumns());
-        $definition->finalize($this->logger);
+        $definition->finalize($this->logger, false);
         assertEquals(1, $this->logger->countMessages());
         assertEquals(2, $definition->countAllColumns());
     }

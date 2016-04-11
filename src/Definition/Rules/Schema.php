@@ -4,12 +4,12 @@ namespace PruneMazui\DdlGenerator\Definition\Rules;
 use PruneMazui\DdlGenerator\DdlGeneratorException;
 use Psr\Log\LoggerInterface;
 
-class Schema
+class Schema extends AbstractRules
 {
     /**
      * @var string
      */
-    private $schema_name;
+    private $schemaName;
 
     /**
      * @var \PruneMazui\DdlGenerator\Definition\Rules\Table[]
@@ -21,7 +21,7 @@ class Schema
         if(is_null($schema_name)) {
             $schema_name = '';
         }
-        $this->schema_name = $schema_name;
+        $this->schemaName = $schema_name;
     }
 
     /**
@@ -58,6 +58,10 @@ class Schema
      */
     public function addTable(Table $table)
     {
+        if($this->isLocked) {
+            throw new DdlGeneratorException('This object is already immutable.');
+        }
+
         $table_name = $table->getTableName();
         if(array_key_exists($table_name, $this->tables)) {
             throw new DdlGeneratorException("Table '{$table_name}' is already exist in {$this->getSchemaName()}");
@@ -103,7 +107,7 @@ class Schema
      */
     public function getSchemaName()
     {
-        return $this->schema_name;
+        return $this->schemaName;
     }
 
     /**
@@ -112,5 +116,18 @@ class Schema
     public function __toString()
     {
         return (string) $this->getSchemaName();
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \PruneMazui\DdlGenerator\Definition\Rules\AbstractRules::lock()
+     */
+    public function lock()
+    {
+        foreach($this->tables as $table) {
+            $table->lock();
+        }
+
+        return parent::lock();
     }
 }

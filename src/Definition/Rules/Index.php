@@ -3,7 +3,7 @@ namespace PruneMazui\DdlGenerator\Definition\Rules;
 
 use PruneMazui\DdlGenerator\DdlGeneratorException;
 
-class Index
+class Index extends AbstractRules
 {
     private $keyName;
 
@@ -58,6 +58,10 @@ class Index
      */
     public function addColumn($column_name)
     {
+        if($this->isLocked) {
+            throw new DdlGeneratorException('This object is already immutable.');
+        }
+
         if(! strlen($column_name)) {
             throw new DdlGeneratorException('Column Name is not allow empty.');
         }

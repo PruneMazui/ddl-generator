@@ -8,7 +8,7 @@ use PruneMazui\DdlGenerator\DdlGeneratorException;
  *
  * @author ko_tanaka
  */
-class Column
+class Column extends AbstractRules
 {
     private $columnName;
 

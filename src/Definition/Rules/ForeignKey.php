@@ -3,7 +3,7 @@ namespace PruneMazui\DdlGenerator\Definition\Rules;
 
 use PruneMazui\DdlGenerator\DdlGeneratorException;
 
-class ForeignKey
+class ForeignKey extends AbstractRules
 {
     private $keyName;
 
@@ -81,6 +81,10 @@ class ForeignKey
      */
     public function addColumn($column_name, $lockup_column_name)
     {
+        if($this->isLocked) {
+            throw new DdlGeneratorException('This object is already immutable.');
+        }
+
         if(! strlen($column_name)) {
             throw new DdlGeneratorException('Column Name is not allow empty.');
         }
@@ -158,6 +162,7 @@ class ForeignKey
     }
 
     /**
+     *
      * @return string
      */
     public function getLookupTableName()
@@ -166,6 +171,7 @@ class ForeignKey
     }
 
     /**
+     *
      * @return array
      */
     public function getLookupColumnNameList()
@@ -174,6 +180,7 @@ class ForeignKey
     }
 
     /**
+     *
      * @return string
      */
     public function getOnUpdate()

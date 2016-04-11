@@ -15,6 +15,8 @@ use Psr\Log\NullLogger;
  */
 class Definition
 {
+    private $isLocked = false;
+
     /**
      * @var \PruneMazui\DdlGenerator\Definition\Rules\Schema[]
      */
@@ -34,9 +36,10 @@ class Definition
      * execute filtering and checking to all tables
      *
      * @param LoggerInterface optional $logger
+     * @param bool optional $lock
      * @return \PruneMazui\DdlGenerator\Definition\Rules\Schema
      */
-    public function finalize(LoggerInterface $logger = null)
+    public function finalize(LoggerInterface $logger = null, $lock = true)
     {
         if(is_null($logger)) {
             $logger = new NullLogger();
@@ -99,6 +102,10 @@ class Definition
                     $logger->notice("Foreign Key `{$foreign_key->getUniqueName()}` column data type is not equal to lockup column data type.");
                 }
             }
+        }
+
+        if($lock) {
+            $this->lock();
         }
 
         return $this;
@@ -224,6 +231,10 @@ class Definition
      */
     public function addSchema(Schema $schema)
     {
+        if($this->isLocked) {
+            throw new DdlGeneratorException('This object is already immutable.');
+        }
+
         $schema_name = $schema->getSchemaName();
         if(array_key_exists($schema_name, $this->schemas)) {
             throw new DdlGeneratorException("Schema '{$schema_name}' is already exist");
@@ -299,6 +310,10 @@ class Definition
      */
     public function addIndex(Index $index)
     {
+        if($this->isLocked) {
+            throw new DdlGeneratorException('This object is already immutable.');
+        }
+
         $key_name = $index->getUniqueName();
         if(array_key_exists($key_name, $this->indexes)) {
             throw new DdlGeneratorException("Index Key '{$key_name}' is already exist");
@@ -320,6 +335,10 @@ class Definition
      */
     public function addForgienKey(ForeignKey $foreign_key)
     {
+        if($this->isLocked) {
+            throw new DdlGeneratorException('This object is already immutable.');
+        }
+
         $key_name = $foreign_key->getUniqueName();
         if(array_key_exists($key_name, $this->indexes)) {
             throw new DdlGeneratorException("Index Key '{$key_name}' is already exist");
@@ -330,6 +349,21 @@ class Definition
         }
 
         $this->foreignKeys[$key_name] = $foreign_key;
+        return $this;
+    }
+
+    /**
+     *
+     * @return \PruneMazui\DdlGenerator\Definition\Definition
+     */
+    public function lock()
+    {
+        foreach($this->schemas as $schema) {
+            $schema->lock();
+        }
+
+        $this->isLocked = true;
+
         return $this;
     }
 }

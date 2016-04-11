@@ -41,10 +41,15 @@ abstract class AbstractDdlGenerator
             return $config;
         }
 
-        if(isset($config[$key])) {
-            return $config[$key];
+        $key_list = explode(".", $key);
+
+        foreach($key_list as $key) {
+            if(! isset($config[$key])) {
+                return null;
+            }
+            $config = $config[$key];
         }
 
-        return null;
+        return $config;
     }
 }
