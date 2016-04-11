@@ -82,6 +82,22 @@ class DefinitionRulesTest extends AbstractTestCase
 
         // to string
         assertEquals((string) $table, "table");
+
+        // immutable test
+        $table->lock();
+        try {
+            $table->addColumn(new Column("column3", "test"));
+            $this->fail();
+        } catch (DdlGeneratorException $ex) {
+            $this->addToAssertionCount(1);
+        }
+
+        try {
+            $table->addPrimaryKey("column2");
+            $this->fail();
+        } catch (DdlGeneratorException $ex) {
+            $this->addToAssertionCount(1);
+        }
     }
 
     /**
@@ -116,6 +132,15 @@ class DefinitionRulesTest extends AbstractTestCase
 
         // to string
         assertEquals((string) $index, "key_name");
+
+        // immutable test
+        $index->lock();
+        try {
+            $index->addColumn("column");
+            $this->fail();
+        } catch (DdlGeneratorException $ex) {
+            $this->addToAssertionCount(1);
+        }
     }
 
     /**
@@ -125,7 +150,7 @@ class DefinitionRulesTest extends AbstractTestCase
     {
         // key name is required
         try {
-            new ForeignKey("", null, "table_name", null, "lockup_table_name", "CASCADE", "CASCADE");
+            new ForeignKey("", null, "table_name", null, "lookup_table_name", "CASCADE", "CASCADE");
             $this->fail();
         } catch (DdlGeneratorException $ex) {
             $this->addToAssertionCount(1);
@@ -133,13 +158,13 @@ class DefinitionRulesTest extends AbstractTestCase
 
         // table name is required
         try {
-            new ForeignKey("key_name", null, "", null, "lockup_table_name", "CASCADE", "CASCADE");
+            new ForeignKey("key_name", null, "", null, "lookup_table_name", "CASCADE", "CASCADE");
             $this->fail();
         } catch (DdlGeneratorException $ex) {
             $this->addToAssertionCount(1);
         }
 
-        // lockup table name is required
+        // lookup table name is required
         try {
             new ForeignKey("key_name", null, "table_name", null, "", "CASCADE", "CASCADE");
             $this->fail();
@@ -149,7 +174,7 @@ class DefinitionRulesTest extends AbstractTestCase
 
         // on update is required
         try {
-            new ForeignKey("key_name", null, "table_name", null, "lockup_table_name", "", "CASCADE");
+            new ForeignKey("key_name", null, "table_name", null, "lookup_table_name", "", "CASCADE");
             $this->fail();
         } catch (DdlGeneratorException $ex) {
             $this->addToAssertionCount(1);
@@ -157,23 +182,23 @@ class DefinitionRulesTest extends AbstractTestCase
 
         // on delete is required
         try {
-            new ForeignKey("key_name", null, "table_name", null, "lockup_table_name", "CASCADE", "");
+            new ForeignKey("key_name", null, "table_name", null, "lookup_table_name", "CASCADE", "");
             $this->fail();
         } catch (DdlGeneratorException $ex) {
             $this->addToAssertionCount(1);
         }
 
-        $foreign_key = new ForeignKey("key_name", null, "table_name", null, "lockup_table_name", "CASCADE", "CASCADE");
+        $foreign_key = new ForeignKey("key_name", null, "table_name", null, "lookup_table_name", "CASCADE", "CASCADE");
 
         // column name is required
         try {
-            $foreign_key->addColumn("", "lockup_column");
+            $foreign_key->addColumn("", "lookup_column");
             $this->fail();
         } catch (DdlGeneratorException $ex) {
             $this->addToAssertionCount(1);
         }
 
-        // lockup column name is required
+        // lookup column name is required
         try {
             $foreign_key->addColumn("column", "");
             $this->fail();
@@ -183,6 +208,15 @@ class DefinitionRulesTest extends AbstractTestCase
 
         // to string
         assertEquals((string) $foreign_key, "key_name");
+
+        // immutable test
+        $foreign_key->lock();
+        try {
+            $foreign_key->addColumn("column", "lookup_column");
+            $this->fail();
+        } catch (DdlGeneratorException $ex) {
+            $this->addToAssertionCount(1);
+        }
     }
 
     /**
@@ -203,5 +237,16 @@ class DefinitionRulesTest extends AbstractTestCase
 
         // to string
         assertEquals((string) $schema, "schama_name");
+
+        // immutable test
+        $schema = new Schema("schama_name");
+        $schema->lock();
+
+        try {
+            $schema->addTable(new Table("table"));
+            $this->fail();
+        } catch (DdlGeneratorException $ex) {
+            $this->addToAssertionCount(1);
+        }
     }
 }

@@ -99,7 +99,7 @@ class Definition
                 }
 
                 if($column->getDataType() != $lookup_column->getDataType()) {
-                    $logger->notice("Foreign Key `{$foreign_key->getUniqueName()}` column data type is not equal to lockup column data type.");
+                    $logger->notice("Foreign Key `{$foreign_key->getUniqueName()}` column data type is not equal to lookup column data type.");
                 }
             }
         }

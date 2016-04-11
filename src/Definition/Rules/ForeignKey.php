@@ -13,11 +13,11 @@ class ForeignKey extends AbstractRules
 
     private $columnNameList = array();
 
-    private $lockupSchemaName;
+    private $lookupSchemaName;
 
-    private $lockupTableName;
+    private $lookupTableName;
 
-    private $lockupColumnNameList = array();
+    private $lookupColumnNameList = array();
 
     private $onUpdate;
 
@@ -27,14 +27,14 @@ class ForeignKey extends AbstractRules
      * @param string $key_name
      * @param string $schema_name
      * @param string $table_name
-     * @param string $lockup_schema_name
-     * @param string $lockup_table_name
+     * @param string $lookup_schema_name
+     * @param string $lookup_table_name
      * @param string $on_update
      * @param string $on_delete
      * @throws DdlGeneratorException
      */
     public function __construct($key_name, $schema_name, $table_name,
-            $lockup_schema_name, $lockup_table_name, $on_update, $on_delete)
+            $lookup_schema_name, $lookup_table_name, $on_update, $on_delete)
     {
         if(! strlen($key_name)) {
             throw new DdlGeneratorException('Key Name is not allow empty.');
@@ -51,15 +51,15 @@ class ForeignKey extends AbstractRules
         }
         $this->tableName = $table_name;
 
-        if(is_null($lockup_schema_name)) {
-            $lockup_schema_name = '';
+        if(is_null($lookup_schema_name)) {
+            $lookup_schema_name = '';
         }
-        $this->lockupSchemaName = $lockup_schema_name;
+        $this->lookupSchemaName = $lookup_schema_name;
 
-        if(! strlen($lockup_table_name)) {
+        if(! strlen($lookup_table_name)) {
             throw new DdlGeneratorException('Lookup Table Name is not allow empty.');
         }
-        $this->lockupTableName = $lockup_table_name;
+        $this->lookupTableName = $lookup_table_name;
 
         if(! strlen($on_update)) {
             throw new DdlGeneratorException('On Update is not allow empty.');
@@ -75,11 +75,11 @@ class ForeignKey extends AbstractRules
     /**
      *
      * @param string $column_name
-     * @param string $lockup_column_name
+     * @param string $lookup_column_name
      * @throws DdlGeneratorException
      * @return \PruneMazui\DdlGenerator\Definition\Rules\ForeignKey
      */
-    public function addColumn($column_name, $lockup_column_name)
+    public function addColumn($column_name, $lookup_column_name)
     {
         if($this->isLocked) {
             throw new DdlGeneratorException('This object is already immutable.');
@@ -89,12 +89,12 @@ class ForeignKey extends AbstractRules
             throw new DdlGeneratorException('Column Name is not allow empty.');
         }
 
-        if(! strlen($lockup_column_name)) {
+        if(! strlen($lookup_column_name)) {
             throw new DdlGeneratorException('Lookup Column Name is not allow empty.');
         }
 
         $this->columnNameList[] = $column_name;
-        $this->lockupColumnNameList[] = $lockup_column_name;
+        $this->lookupColumnNameList[] = $lookup_column_name;
         return $this;
     }
 
@@ -158,7 +158,7 @@ class ForeignKey extends AbstractRules
      */
     public function getLookupSchemaName()
     {
-        return $this->lockupSchemaName;
+        return $this->lookupSchemaName;
     }
 
     /**
@@ -167,7 +167,7 @@ class ForeignKey extends AbstractRules
      */
     public function getLookupTableName()
     {
-        return $this->lockupTableName;
+        return $this->lookupTableName;
     }
 
     /**
@@ -176,7 +176,7 @@ class ForeignKey extends AbstractRules
      */
     public function getLookupColumnNameList()
     {
-        return $this->lockupColumnNameList;
+        return $this->lookupColumnNameList;
     }
 
     /**

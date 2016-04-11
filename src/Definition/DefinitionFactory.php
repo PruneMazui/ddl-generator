@@ -183,13 +183,13 @@ class DefinitionFactory
             if(strlen($key_name)) {
                 $schema_name = $row->getFeild(Feild::SCHEMA_NAME);
                 $table_name = $row->getFeild(Feild::TABLE_NAME);
-                $lockup_schema_name = $row->getFeild(Feild::LOOKUP_SCHEMA_NAME);
-                $lockup_table_name = $row->getFeild(Feild::LOOKUP_TABLE_NAME);
+                $lookup_schema_name = $row->getFeild(Feild::LOOKUP_SCHEMA_NAME);
+                $lookup_table_name = $row->getFeild(Feild::LOOKUP_TABLE_NAME);
                 $on_update = $row->getFeild(Feild::ON_UPDATE);
                 $on_delete = $row->getFeild(Feild::ON_DELETE);
 
                 $foreign_key = new ForeignKey($key_name, $schema_name, $table_name,
-                    $lockup_schema_name, $lockup_table_name, $on_update, $on_delete);
+                    $lookup_schema_name, $lookup_table_name, $on_update, $on_delete);
 
                 $definition->addForgienKey($foreign_key);
             }
@@ -200,8 +200,8 @@ class DefinitionFactory
 
             $column_name = $row->getFeild(Feild::COLUMN_NAME);
             if(strlen($column_name)) {
-                $lockup_column_name = $row->getFeild(Feild::LOOKUP_COLUMN_NAME);
-                $foreign_key->addColumn($column_name, $lockup_column_name);
+                $lookup_column_name = $row->getFeild(Feild::LOOKUP_COLUMN_NAME);
+                $foreign_key->addColumn($column_name, $lookup_column_name);
             }
         }
 

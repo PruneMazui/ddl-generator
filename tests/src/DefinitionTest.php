@@ -136,7 +136,7 @@ class DefinitionTest extends AbstractTestCase
 
         try {
             // conflict Foreign key error
-            $definition->addForgienKey(new ForeignKey("hoge", "", "table", "", "lockup", "piyo", "piyo"));
+            $definition->addForgienKey(new ForeignKey("hoge", "", "table", "", "lookup", "piyo", "piyo"));
             $this->fail();
         } catch (DdlGeneratorException $ex) {
             $this->addToAssertionCount(1);
@@ -150,8 +150,8 @@ class DefinitionTest extends AbstractTestCase
     {
         $definition = new Definition();
 
-        $definition->addForgienKey(new ForeignKey("hoge", "", "table", "", "lockup", "piyo", "piyo"));
-        $definition->addForgienKey(new ForeignKey("hoge", "", "table2", "", "lockup", "piyo", "piyo")); // other table
+        $definition->addForgienKey(new ForeignKey("hoge", "", "table", "", "lookup", "piyo", "piyo"));
+        $definition->addForgienKey(new ForeignKey("hoge", "", "table2", "", "lookup", "piyo", "piyo")); // other table
 
         assertEquals(2, $definition->countForeignKeys());
 
@@ -165,7 +165,7 @@ class DefinitionTest extends AbstractTestCase
 
         try {
             // conflict Foreign key error
-            $definition->addForgienKey(new ForeignKey("hoge", "", "table", "", "lockup", "piyo", "piyo"));
+            $definition->addForgienKey(new ForeignKey("hoge", "", "table", "", "lookup", "piyo", "piyo"));
             $this->fail();
         } catch (DdlGeneratorException $ex) {
             $this->addToAssertionCount(1);
@@ -252,6 +252,74 @@ class DefinitionTest extends AbstractTestCase
         $def->addForgienKey($fkey);
         try {
             $def->finalize();
+            $this->fail();
+        } catch (DdlGeneratorException $ex) {
+            $this->addToAssertionCount(1);
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function lockTest()
+    {
+        $def = new Definition();
+
+        $column = new Column("column", "INT");
+
+        $table = new Table("table");
+        $table->addColumn($column);
+
+        $schema = new Schema("schema");
+        $schema->addTable($table);
+        $def->addSchema($schema);
+
+        $fkey = new ForeignKey("foreign_key", "schema", "table", "schema", "table", "CASCADE", "CASCADE");
+        $fkey->addColumn("column", "column");
+        $def->addForgienKey($fkey);
+
+        $index = new Index("index", true, "schema", "table");
+        $index->addColumn("column");
+        $def->addIndex($index);
+
+        $def->finalize();
+
+        assertEquals($def->countAllColumns(), 1);
+        assertEquals($def->countAllTables(), 1);
+        assertEquals($def->countSchemas(), 1);
+        assertEquals($def->countForeignKeys(), 1);
+        assertEquals($def->countIndexes(), 1);
+
+        try {
+            $def->addSchema(new Schema("schema2"));
+            $this->fail();
+        } catch (DdlGeneratorException $ex) {
+            $this->addToAssertionCount(1);
+        }
+
+        try {
+            $def->getSchema("schema")->addTable(new Table("table2"));
+            $this->fail();
+        } catch (DdlGeneratorException $ex) {
+            $this->addToAssertionCount(1);
+        }
+
+        try {
+            $def->getTable("schema", "table")->addColumn(new Column("column2", "INT"));
+            $this->fail();
+        } catch (DdlGeneratorException $ex) {
+            $this->addToAssertionCount(1);
+        }
+
+        try {
+            $def->addForgienKey(new ForeignKey("foreign_key2", "schema", "table", "shema", "table", "CASCADE", "CASCADE"));
+            $this->fail();
+        } catch (DdlGeneratorException $ex) {
+            $this->addToAssertionCount(1);
+        }
+
+        try {
+            $def->addIndex(new Index("index2", true, "schema", "table"));
             $this->fail();
         } catch (DdlGeneratorException $ex) {
             $this->addToAssertionCount(1);
