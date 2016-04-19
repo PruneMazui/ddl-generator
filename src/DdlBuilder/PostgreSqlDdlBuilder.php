@@ -30,6 +30,103 @@ class PostgreSqlDdlBuilder extends AbstractDdlBuilder
     );
 
     /**
+     * Quote identifier for PgSQL
+     * @param string $field_name
+     * @return string
+     */
+    private function quoteIdentifier($field_name)
+    {
+        $field_name = str_replace('"', '""', $field_name);
+
+        return '"' . $field_name . '"';
+    }
+
+    private function createIdentifier($schema, $table)
+    {
+        $ret = (String)$schema;
+        if(strlen($ret)) {
+            $ret = $this->quoteIdentifier($ret) . '.';
+        }
+
+        return $ret . $this->quoteIdentifier((String) $table);
+    }
+
+    private function buildColumnsComment(Schema $schema, Table $table)
+    {
+        $eol = $this->getConfig('end_of_line');
+        $sql = '';
+
+        foreach($table->getColumns() as $column) {
+            $comment = $column->getComment();
+            if(! strlen($comment)) {
+                continue;
+            }
+
+            $sql .= 'COMMENT ON COLUMN '
+                . $this->createIdentifier($schema, $table)
+                . '.' . $this->quoteIdentifier($column->getColumnName())
+                . ' IS ' . $this->quoteString($comment) . ';' . $eol;
+        }
+
+        return $sql;
+    }
+
+    private function buildTableColumns(Table $table)
+    {
+        $addEmptyString = $this->getConfig('add_empty_string');
+        $eol = $this->getConfig('end_of_line');
+        $indent = $this->getConfig('indent');
+
+        $lines = array();
+        foreach($table->getColumns() as $column) {
+            $sql = '';
+            $sql .= $indent . $this->quoteIdentifier($column->getColumnName()) . ' ';
+
+            $data_type = $column->getDataType();
+
+            if($column->isAutoIncrement()) {
+                if(strpos("SERIAL", strtoupper($data_type)) !== false) {
+                    // noop
+                }
+                else if(! $this->isNumericType($data_type)) {
+                    throw new DdlGeneratorException("datatype `{$data_type}` is not support auto_increment");
+                }
+                else {
+                    // @todo convert data type
+                    $data_type = "SERIAL";
+                }
+            }
+
+
+            $sql .= $data_type;
+
+            $length = $column->getLength();
+            if(strlen($length)) {
+                $sql .= '(' . $length . ')';
+            }
+
+            if($column->isRequired()) {
+                $sql .= ' NOT NULL';
+            }
+
+            $default = $column->getDefault();
+            if(strlen($default)) {
+                if($this->isNumericType($data_type)) {
+                    $sql .= ' DEFAULT ' . $default;
+                } else {
+                    $sql .= ' DEFAULT ' . $this->quoteString($default);
+                }
+            } else if($addEmptyString && strpos(strtoupper($data_type), 'CHAR') !== false) {
+                $sql .= " DEFAULT ''";
+            }
+
+            $lines[] = $sql;
+        }
+
+        return implode(',' . $eol, $lines);
+    }
+
+    /**
      *
      * @param string $data_type
      * @return bool
@@ -45,28 +142,6 @@ class PostgreSqlDdlBuilder extends AbstractDdlBuilder
         }
 
         return false;
-    }
-
-    /**
-     * Quote identifier for PgSQL
-     * @param string $field_name
-     * @return string
-     */
-    private function quoteIdentifier($field_name)
-    {
-        $field_name = str_replace('"', '""', $field_name);
-
-        return '"' . $field_name . '"';
-    }
-
-    private function createIdentifier(Schema $schema, Table $table)
-    {
-        $ret = $schema->getSchemaName();
-        if(strlen($ret)) {
-            $ret = $this->quoteIdentifier($ret) . '.';
-        }
-
-        return $ret . $this->quoteIdentifier($table->getTableName());
     }
 
 
@@ -89,16 +164,18 @@ class PostgreSqlDdlBuilder extends AbstractDdlBuilder
                 $primary_key[$key] = $this->quoteIdentifier($value);
             }
 
-            $sql .= ',' . $eol . $eol . $indent . "CONSTRAINT pk_{$table->getTableName()} PRIMARY KEY (" . implode(', ', $primary_key) . ')' . $eol;
+            $sql .= ',' . $eol . $eol . $indent . "PRIMARY KEY (" . implode(', ', $primary_key) . ')' . $eol;
         }
 
-        $sql .= ')';
-//         // @todo comment
-//         $comment = $table->getComment();
-//         if(strlen($comment)) {
-//             $sql .= ' COMMENT=' . $this->quoteString($comment);
-//         }
-        $sql .= ';';
+        $sql .= ');' . $eol;
+
+
+        // comment
+        $comment = $table->getComment();
+        if(strlen($comment)) {
+            $sql .= 'COMMENT ON TABLE ' . $this->createIdentifier($schema, $table) . ' IS ' . $this->quoteString($comment) . ';' . $eol;
+        }
+        $sql .= $this->buildColumnsComment($schema, $table);
 
         return $this->encode($sql);
     }
@@ -136,76 +213,12 @@ class PostgreSqlDdlBuilder extends AbstractDdlBuilder
         return $this->encode('DROP TABLE IF EXISTS ' . $this->createIdentifier($schema, $table) . ' CASCADE;');
     }
 
-    private function buildTableColumns(Table $table)
-    {
-        $addEmptyString = $this->getConfig('add_empty_string');
-        $eol = $this->getConfig('end_of_line');
-        $indent = $this->getConfig('indent');
-
-        $lines = array();
-        foreach($table->getColumns() as $column) {
-            $sql = '';
-            $sql .= $indent . $this->quoteIdentifier($column->getColumnName()) . ' ';
-
-            $data_type = $column->getDataType();
-
-            if($column->isAutoIncrement()) {
-                if(strpos("SERIAL", strtoupper($data_type)) !== false) {
-                   // noop
-                }
-                else if(! $this->isNumericType($data_type)) {
-                    throw new DdlGeneratorException("datatype `{$data_type}` is not support auto_increment");
-                }
-                else {
-                    // @todo convert data type
-                    $data_type = "SERIAL";
-                }
-            }
-
-
-            $sql .= $data_type;
-
-            $length = $column->getLength();
-            if(strlen($length)) {
-                $sql .= '(' . $length . ')';
-            }
-            $sql .= ' ';
-
-            if($column->isRequired()) {
-                $sql .= 'NOT NULL ';
-            }
-
-            $default = $column->getDefault();
-            if(strlen($default)) {
-                if($this->isNumericType($data_type)) {
-                    $sql .= 'DEFAULT ' . $default . " ";
-                } else {
-                    $sql .= 'DEFAULT ' . $this->quoteString($default) . " ";
-                }
-            } else if($addEmptyString && strpos(strtoupper($data_type), 'CHAR') !== false) {
-                $sql .= "DEFAULT '' ";
-            }
-
-//            // @todo comment
-//             $comment = $column->getComment();
-//             if(strlen($comment)) {
-//                 $sql .= 'COMMENT ' . $this->quoteString($comment);
-//             }
-
-            $lines[] = $sql;
-        }
-
-        return implode(',' . $eol, $lines);
-    }
-
     /**
      * {@inheritDoc}
      * @see \PruneMazui\DdlGenerator\DdlBuilder\DdlBuilderInterface::buildCreateIndex()
      */
     public function buildCreateIndex(Index $index)
     {
-        return "";
-
         $sql = "CREATE ";
         if($index->isUniqueIndex()) {
             $sql .= "UNIQUE ";
@@ -213,7 +226,7 @@ class PostgreSqlDdlBuilder extends AbstractDdlBuilder
 
         // ignore schema
         $sql .= "INDEX " . $this->quoteIdentifier($index->getKeyName())
-            . " ON " . $this->quoteIdentifier($index->getTableName());
+            . " ON " . $this->createIdentifier($index->getSchemaName(), $index->getTableName());
 
         $columns = array_map(array($this, 'quoteIdentifier'), $index->getColumnNameList());
 
@@ -228,16 +241,14 @@ class PostgreSqlDdlBuilder extends AbstractDdlBuilder
      */
     public function buildCreateForeignKey(ForeignKey $foreign_key)
     {
-        return "";
-
         $columns = array_map(array($this, 'quoteIdentifier'), $foreign_key->getColumnNameList());
         $lookup_columns = array_map(array($this, 'quoteIdentifier'), $foreign_key->getLookupColumnNameList());
 
         // ignore schema
-        $sql = "ALTER TABLE " . $this->quoteIdentifier($foreign_key->getTableName())
+        $sql = "ALTER TABLE " . $this->createIdentifier($foreign_key->getSchemaName(), $foreign_key->getTableName())
             . " ADD CONSTRAINT " . $this->quoteIdentifier($foreign_key->getKeyName())
             . " FOREIGN KEY (" . implode(", ", $columns) . ")"
-            . " REFERENCES " . $this->quoteIdentifier($foreign_key->getLookupTableName())
+            . " REFERENCES " . $this->createIdentifier($foreign_key->getLookupSchemaName(), $foreign_key->getLookupTableName())
             . " (" . implode(", ", $lookup_columns) . ")"
             . " ON UPDATE " . $foreign_key->getOnUpdate()
             . " ON DELETE " . $foreign_key->getOnDelete() . ";";
