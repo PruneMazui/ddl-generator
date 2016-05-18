@@ -11,6 +11,8 @@ use Psr\Log\NullLogger;
 /**
  * database definition
  *
+ * @todo key's relation is Schema
+ *
  * @author ko_tanaka
  */
 class Definition

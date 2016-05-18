@@ -1,5 +1,5 @@
 {
-    "name": "PruneMazui/ddl-generator",
+    "name": "prune-mazui/ddl-generator",
     "description": "ddl generator from MS Excel",
     "keywords": ["ddl", "generator", "sql"],
     "type": "library",
