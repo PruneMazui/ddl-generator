@@ -8,6 +8,8 @@ require_once __DIR__ . '/../vendor/autoload.php';
 $reflection = new \ReflectionClass('PHPUnit_Framework_Assert');
 require_once dirname($reflection->getFileName()) . '/Assert/Functions.php';
 
+mb_internal_encoding('UTF-8');
+
 if(file_exists(__DIR__ . '/config/config.php')) {
     $config = include __DIR__ . '/config/config.php';
 
