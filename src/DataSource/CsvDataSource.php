@@ -85,7 +85,7 @@ class CsvDataSource extends AbstractDataSource
             throw new DdlGeneratorException('filename is required for config');
         }
 
-        if (!file_exists($filename) || !is_readable($filename)) {
+        if (! file_exists($filename) || ! is_file($filename) || ! is_readable($filename)) {
             throw new DdlGeneratorException("'{$filename}' is not readable");
         }
 
