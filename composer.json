@@ -4,7 +4,7 @@
     "keywords": ["ddl", "generator", "sql"],
     "type": "library",
     "license": "MIT",
-    "homepage": "https://github.com/PruneMazui/ddl_generator",
+    "homepage": "https://github.com/PruneMazui/DdlGenerator",
     "authors": [
           {
             "name": "PruneMazui",
