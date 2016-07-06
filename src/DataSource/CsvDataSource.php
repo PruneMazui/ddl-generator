@@ -12,15 +12,15 @@ use PruneMazui\DdlGenerator\Definition\Rules\Table;
  */
 class CsvDataSource extends AbstractDataSource
 {
-    protected static $defaultConfig = array(
+    protected static $defaultConfig = [
         'filename' => '',
         'format' => 'UTF-8',
         'skip_first_line' => true,
-        'key_map' => array()
-    );
+        'key_map' => []
+    ];
 
-    protected static $defaultKeyMap = array(
-        self::TYPE_TABLE => array(
+    protected static $defaultKeyMap = [
+        self::TYPE_TABLE => [
             Feild::SCHEMA_NAME           => 0,
             Feild::TABLE_NAME            => 1,
             Feild::TABLE_COMMENT         => 2,
@@ -32,15 +32,15 @@ class CsvDataSource extends AbstractDataSource
             Feild::COLUMN_PRIMARY_KEY    => 8,
             Feild::COLUMN_AUTO_INCREMENT => 9,
             Feild::COLUMN_DEFAULT        => 10,
-        ),
-        self::TYPE_INDEX => array(
+        ],
+        self::TYPE_INDEX => [
             Feild::KEY_NAME   => 0,
             Feild::UNIQUE_INDEX => 1,
             Feild::SCHEMA_NAME  => 2,
             Feild::TABLE_NAME   => 3,
             Feild::COLUMN_NAME  => 4,
-        ),
-        self::TYPE_FOREIGN_KEY => array(
+        ],
+        self::TYPE_FOREIGN_KEY => [
             Feild::KEY_NAME           => 0,
             Feild::SCHEMA_NAME        => 1,
             Feild::TABLE_NAME         => 2,
@@ -50,8 +50,8 @@ class CsvDataSource extends AbstractDataSource
             Feild::LOOKUP_COLUMN_NAME => 6,
             Feild::ON_UPDATE          => 7,
             Feild::ON_DELETE          => 8,
-        )
-    );
+        ]
+    ];
 
     /**
      * @return resource
@@ -96,7 +96,7 @@ class CsvDataSource extends AbstractDataSource
 
         $skip_line = $this->getConfig('skip_first_line');
 
-        $ret = array();
+        $ret = [];
         $line_count = 0;
         $key_map = $this->getKeyMap();
 

@@ -10,12 +10,12 @@ use PruneMazui\DdlGenerator\AbstractDdlGenerator;
  */
 abstract class AbstractDdlBuilder extends AbstractDdlGenerator implements DdlBuilderInterface
 {
-    protected static $defaultConfig = array(
+    protected static $defaultConfig = [
         'end_of_line'       => "\n",
         'format'            => "UTF-8",
-    );
+    ];
 
-    protected $config = array();
+    protected $config = [];
 
     /**
      * Quote String

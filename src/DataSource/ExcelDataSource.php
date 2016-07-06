@@ -12,15 +12,15 @@ use PruneMazui\DdlGenerator\Definition\Rules\Table;
  */
 class ExcelDataSource extends AbstractDataSource
 {
-    protected static $defaultConfig = array(
+    protected static $defaultConfig = [
         'filename'          => '',
         'sheets'            => '',
         'skip_first_line'   => true,
-        'key_map'           => array(),
-    );
+        'key_map'           => [],
+    ];
 
-    protected static $defaultKeyMap = array(
-        self::TYPE_TABLE => array(
+    protected static $defaultKeyMap = [
+        self::TYPE_TABLE => [
             Feild::SCHEMA_NAME            => "B",
             Feild::TABLE_NAME             => "C",
             Feild::TABLE_COMMENT          => "D",
@@ -32,15 +32,15 @@ class ExcelDataSource extends AbstractDataSource
             Feild::COLUMN_PRIMARY_KEY     => "J",
             Feild::COLUMN_AUTO_INCREMENT  => "K",
             Feild::COLUMN_DEFAULT         => "L",
-        ),
-        self::TYPE_INDEX => array(
+        ],
+        self::TYPE_INDEX => [
             Feild::KEY_NAME         => "B",
             Feild::UNIQUE_INDEX       => "C",
             Feild::SCHEMA_NAME        => "D",
             Feild::TABLE_NAME         => "E",
             Feild::COLUMN_NAME        => "F",
-        ),
-        self::TYPE_FOREIGN_KEY => array(
+        ],
+        self::TYPE_FOREIGN_KEY => [
             Feild::KEY_NAME           => "B",
             Feild::SCHEMA_NAME        => "C",
             Feild::TABLE_NAME         => "D",
@@ -50,8 +50,8 @@ class ExcelDataSource extends AbstractDataSource
             Feild::LOOKUP_COLUMN_NAME => "H",
             Feild::ON_UPDATE          => "I",
             Feild::ON_DELETE          => "J",
-        ),
-    );
+        ],
+    ];
 
     /**
      * {@inheritDoc}
@@ -69,10 +69,10 @@ class ExcelDataSource extends AbstractDataSource
 
         $sheets = $this->getConfig('sheets');
         if(is_string($sheets)) {
-            $sheets = array($sheets);
+            $sheets = [$sheets];
         }
 
-        $ret = array();
+        $ret = [];
         $key_map = $this->getKeyMap();
 
         foreach($sheets as $sheet_name) {
@@ -90,7 +90,7 @@ class ExcelDataSource extends AbstractDataSource
                     continue;
                 }
 
-                $row_data = array();
+                $row_data = [];
                 foreach ($row->getCellIterator() as $col_number => $cell) {
                     $row_data[$col_number] = (string) $cell->getValue();
                 }

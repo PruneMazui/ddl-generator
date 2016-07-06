@@ -3,9 +3,9 @@ namespace PruneMazui\DdlGenerator;
 
 abstract class AbstractDdlGenerator
 {
-    protected static $defaultConfig = array();
+    protected static $defaultConfig = [];
 
-    protected $config = array();
+    protected $config = [];
 
     /**
      * @param array optional $config

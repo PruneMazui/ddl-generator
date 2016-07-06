@@ -18,12 +18,12 @@ class Table extends AbstractRules
     /**
      * @var \PruneMazui\DdlGenerator\Definition\Rules\Column[]
      */
-    private $columns = array();
+    private $columns = [];
 
     /**
      * @var array
      */
-    private $primaryKey = array();
+    private $primaryKey = [];
 
     /**
      * @return number

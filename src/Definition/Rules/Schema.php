@@ -14,7 +14,7 @@ class Schema extends AbstractRules
     /**
      * @var \PruneMazui\DdlGenerator\Definition\Rules\Table[]
      */
-    private $tables = array();
+    private $tables = [];
 
     public function __construct($schema_name)
     {

@@ -11,13 +11,13 @@ class ForeignKey extends AbstractRules
 
     private $tableName;
 
-    private $columnNameList = array();
+    private $columnNameList = [];
 
     private $lookupSchemaName;
 
     private $lookupTableName;
 
-    private $lookupColumnNameList = array();
+    private $lookupColumnNameList = [];
 
     private $onUpdate;
 

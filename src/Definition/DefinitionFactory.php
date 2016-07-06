@@ -20,17 +20,17 @@ class DefinitionFactory
     /**
      * @var DataSourceInterface[]
      */
-    private $table_datasources = array();
+    private $table_datasources = [];
 
     /**
      * @var DataSourceInterface[]
      */
-    private $foregin_key_datasouces = array();
+    private $foregin_key_datasouces = [];
 
     /**
      * @var DataSourceInterface[]
      */
-    private $index_datasources = array();
+    private $index_datasources = [];
 
     /**
      * @param DataSourceInterface $datasource

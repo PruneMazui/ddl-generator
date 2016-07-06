@@ -15,19 +15,19 @@ use PruneMazui\DdlGenerator\Definition\Rules\Index;
  */
 class MySqlDdlBuilder extends AbstractDdlBuilder
 {
-    protected static $defaultConfig = array(
+    protected static $defaultConfig = [
         'add_empty_string'  => true, // if colmn's data type is (var)char and required, empty string is added to the default value
         'end_of_line'       => "\n",
         'indent'            => "    ",
         'format'            => "UTF-8",
-    );
+    ];
 
-    protected static $numericTypeMap = array(
+    protected static $numericTypeMap = [
         'INT', // INTEGER INT SMALLINT TINYINT MEDIUMINT BIGINT
         'DEC', 'FIXED', 'NUMERIC', 'FIXED', // DECIMAL alias
         'BIT', 'BOOL', // TINYINT(1)
         'FLOAT', 'DOUBLE', 'REAL',
-    );
+    ];
 
     /**
      *
@@ -168,7 +168,7 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
         $eol = $this->getConfig('end_of_line');
         $indent = $this->getConfig('indent');
 
-        $lines = array();
+        $lines = [];
         foreach($table->getColumns() as $column) {
             $sql = '';
             $sql .= $indent . $this->quoteIdentifier($column->getColumnName()) . ' ';
@@ -241,7 +241,7 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
         $sql .= "INDEX " . $this->quoteIdentifier($index->getKeyName())
             . " ON " . $this->quoteIdentifier($index->getTableName());
 
-        $columns = array_map(array($this, 'quoteIdentifier'), $index->getColumnNameList());
+        $columns = array_map([$this, 'quoteIdentifier'], $index->getColumnNameList());
 
         $sql .= " (" . implode(", ", $columns) . ");";
 
@@ -267,8 +267,8 @@ class MySqlDdlBuilder extends AbstractDdlBuilder
      */
     public function buildCreateForeignKey(ForeignKey $foreign_key)
     {
-        $columns = array_map(array($this, 'quoteIdentifier'), $foreign_key->getColumnNameList());
-        $lookup_columns = array_map(array($this, 'quoteIdentifier'), $foreign_key->getLookupColumnNameList());
+        $columns = array_map([$this, 'quoteIdentifier'], $foreign_key->getColumnNameList());
+        $lookup_columns = array_map([$this, 'quoteIdentifier'], $foreign_key->getLookupColumnNameList());
 
         // ignore schema
         $sql = "ALTER TABLE " . $this->quoteIdentifier($foreign_key->getTableName())

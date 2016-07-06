@@ -22,17 +22,17 @@ class Definition
     /**
      * @var \PruneMazui\DdlGenerator\Definition\Rules\Schema[]
      */
-    private $schemas = array();
+    private $schemas = [];
 
     /**
      * @var \PruneMazui\DdlGenerator\Definition\Rules\ForeignKey[]
      */
-    private $foreignKeys = array();
+    private $foreignKeys = [];
 
     /**
      * @var \PruneMazui\DdlGenerator\Definition\Rules\Index[]
      */
-    private $indexes = array();
+    private $indexes = [];
 
     /**
      * execute filtering and checking to all tables

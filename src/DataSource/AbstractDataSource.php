@@ -16,11 +16,11 @@ abstract class AbstractDataSource extends AbstractDdlGenerator implements DataSo
 
     protected $datasource_type = self::TYPE_TABLE; // default
 
-    protected static $defaultKeyMap = array(
-        self::TYPE_TABLE       => array(),
-        self::TYPE_INDEX       => array(),
-        self::TYPE_FOREIGN_KEY => array(),
-    );
+    protected static $defaultKeyMap = [
+        self::TYPE_TABLE       => [],
+        self::TYPE_INDEX       => [],
+        self::TYPE_FOREIGN_KEY => [],
+    ];
 
     /**
      * {@inheritDoc}
@@ -28,11 +28,11 @@ abstract class AbstractDataSource extends AbstractDdlGenerator implements DataSo
      */
     public function setDataSourceType($type)
     {
-        if(! in_array($type, array(
+        if(! in_array($type, [
             self::TYPE_TABLE,
             self::TYPE_INDEX,
             self::TYPE_FOREIGN_KEY,
-        ))) {
+        ])) {
             throw new DdlGeneratorException('Unkown DataSource Type : ' . $type);
         }
 

@@ -13,7 +13,7 @@ class Index extends AbstractRules
 
     private $tableName;
 
-    private $columnNameList = array();
+    private $columnNameList = [];
 
     /**
      * @param string $key_name
